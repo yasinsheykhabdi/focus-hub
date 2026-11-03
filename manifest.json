@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Focus Hub Pro | همراه مطالعه و پومودورو 🐾",
+  "version": "1.0.0",
+  "description": "میز کار متمرکز، تایمر پومودورو، تقویم و برنامه‌ریز هوشمند مقاوم در برابر قطعی اینترنت",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "assets/logo.png",
+      "48": "assets/logo.png",
+      "128": "assets/logo.png"
+    }
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": [
+    "storage",
+    "notifications"
+  ],
+  "icons": {
+    "16": "assets/logo.png",
+    "48": "assets/logo.png",
+    "128": "assets/logo.png"
+  }
+}

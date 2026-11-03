@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="neon">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Hub Pro | خانه تمرکز</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ۱. پرده ورودی اینترو (Splash Screen) -->
+  <div id="splash-screen" class="fullscreen-overlay">
+    <div class="splash-content">
+      <div class="splash-logo-wrap">
+        <img src="assets/logo.png" alt="CATMODORO" onerror="this.src='https://placehold.co/190x190/0d1118/38bdf8?text=CAT'">
+      </div>
+      <h1 class="splash-title">Focus Hub Pro</h1>
+      <p class="splash-subtitle">خانه تمرکز، برنامه‌ریزی هوشمند و ردیابی اهداف</p>
+      <div class="splash-loader-bar"><div class="splash-loader-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ۲. دروازه احراز هویت اولیه -->
+  <div id="auth-screen" class="fullscreen-overlay hidden">
+    <div class="auth-card">
+      <h2>به Focus Hub خوش اومدی! 🐾</h2>
+      <p>برای شخصی‌سازی میز کار و تقویم، مشخصاتت رو ثبت کن:</p>
+      <form id="auth-form" class="auth-form">
+        <div class="input-field-group">
+          <label>نام یا نام مستعار:</label>
+          <input type="text" id="auth-name" placeholder="مثال: یاسین" required>
+        </div>
+        <div class="input-field-group">
+          <label>وضعیت / نقش شما:</label>
+          <select id="auth-role" class="task-select" required>
+            <option value="student">🎓 دانش‌آموز</option>
+            <option value="university" selected>🏛️ دانشجو</option>
+            <option value="konkoor">⏳ کنکوری</option>
+            <option value="freelancer">💻 فریلنسر / کارمند</option>
+          </select>
+        </div>
+        <div class="input-field-group">
+          <label>رشته تحصیلی یا تخصص:</label>
+          <input type="text" id="auth-field" placeholder="مثال: مهندسی کامپیوتر" required>
+        </div>
+        <button type="submit" class="btn-primary" style="margin-top: 15px;">ورود به میز کار 🚀</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ۳. مودال تنظیمات، پروفایل، تم و زبان -->
+  <div id="edit-profile-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 3000;">
+    <div class="auth-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <h2 style="font-size: 1.2rem; margin: 0;">⚙️ تنظیمات و پروفایل</h2>
+        <button type="button" id="close-edit-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+      <form id="edit-profile-form" class="auth-form">
+        <div class="input-field-group">
+          <label>نام یا نام مستعار:</label>
+          <input type="text" id="edit-name" required>
+        </div>
+        <div class="input-field-group">
+          <label>وضعیت / نقش شما:</label>
+          <select id="edit-role" class="task-select">
+            <option value="student">🎓 دانش‌آموز</option>
+            <option value="university">🏛️ دانشجو</option>
+            <option value="konkoor">⏳ کنکوری</option>
+            <option value="freelancer">💻 فریلنسر / کارمند</option>
+          </select>
+        </div>
+        <div class="input-field-group">
+          <label>رشته تحصیلی یا تخصص:</label>
+          <input type="text" id="edit-field" required>
+        </div>
+
+        <!-- انتخابگر تم ظاهری -->
+        <div class="input-field-group" style="margin-top: 10px;">
+          <label>🎨 انتخاب تم ظاهری:</label>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <button type="button" class="theme-btn" data-set-theme="light">☀️ روشن</button>
+            <button type="button" class="theme-btn active" data-set-theme="neon">🌌 نئونی</button>
+            <button type="button" class="theme-btn" data-set-theme="dark">🌑 تاریک</button>
+          </div>
+        </div>
+
+        <!-- انتخابگر زبان برنامه -->
+        <div class="input-field-group" style="margin-top: 10px;">
+          <label id="lbl-edit-lang">🌐 زبان برنامه / Language:</label>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <button type="button" class="lang-btn active" data-set-lang="fa">🇮🇷 فارسی</button>
+            <button type="button" class="lang-btn" data-set-lang="en">🇬🇧 English</button>
+          </div>
+        </div>
+
+        <div class="input-field-group" style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; background: var(--bg-secondary); padding: 10px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <label style="margin: 0; font-size: 0.85rem; cursor: pointer;" for="setting-reminder-toggle">
+            🔔 یادآور هوشمند ساعت و پایان پومودورو 🐾
+          </label>
+          <input type="checkbox" id="setting-reminder-toggle" style="width: 18px; height: 18px; cursor: pointer;">
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 10px;">ذخیره تغییرات 💾</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ۴. مودال افزودن به جدول هفتگی (با انتخابگر ساعت، فیلد یادداشت و تشخیص تداخل) -->
+  <div id="add-weekly-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px); z-index: 3000;">
+    <!-- کد اصلاح‌شده: -->
+<div class="auth-card" style="max-width: 460px; max-height: 88vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <h2 style="font-size: 1.15rem; margin: 0;">📅 افزودن به جدول هفتگی 🐾</h2>
+        <button type="button" id="close-weekly-modal-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+      <form id="weekly-task-form" class="auth-form">
+        <div class="input-field-group">
+          <label>عنوان تکلیف یا درس:</label>
+          <input type="text" id="weekly-task-title" placeholder="مثال: مطالعه ریاضی مهندسی، تست فیزیک" required>
+        </div>
+        
+        <div class="input-field-group">
+          <label>روز هفته:</label>
+          <select id="weekly-day-select" class="task-select">
+            <option value="sat">شنبه</option>
+            <option value="sun">یکشنبه</option>
+            <option value="mon">دوشنبه</option>
+            <option value="tue">سه‌شنبه</option>
+            <option value="wed">چهارشنبه</option>
+            <option value="thu">پنج‌شنبه</option>
+            <option value="fri">جمعه</option>
+          </select>
+        </div>
+
+        <!-- فیلدهای پنهان بازه زمانی -->
+        <input type="hidden" id="weekly-start-time" value="09:00">
+        <input type="hidden" id="weekly-end-time" value="10:30">
+
+        <!-- پنل مدرن انتخاب ساعت اصلاح‌شده -->
+        <div class="student-time-picker-card">
+          <div class="time-picker-header">
+            <span class="picker-label">⏱️ تنظیم بازه زمانی کلاس / مطالعه:</span>
+            <span id="weekly-duration-badge" class="duration-badge">1 ساعت و 30 دقیقه</span>
+          </div>
+
+          <div class="time-slots-dual-row">
+            <!-- ساعت شروع -->
+            <div class="time-block">
+              <span class="block-title">🚀 شروع کلاس:</span>
+              <div class="time-dropdowns-wrap">
+                <select id="weekly-start-h" class="time-sub-select" title="ساعت شروع"></select>
+                <span class="time-sep">:</span>
+                <select id="weekly-start-m" class="time-sub-select" title="دقیقه شروع">
+                  <option value="00">00</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="45">45</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- نشانگر جریان زمان -->
+            <div class="time-flow-arrow" title="تا">←</div>
+
+            <!-- ساعت پایان -->
+            <div class="time-block">
+              <span class="block-title">🏁 پایان کلاس:</span>
+              <div class="time-dropdowns-wrap">
+                <select id="weekly-end-h" class="time-sub-select" title="ساعت پایان"></select>
+                <span class="time-sep">:</span>
+                <select id="weekly-end-m" class="time-sub-select" title="دقیقه پایان">
+                  <option value="00">00</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="45">45</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- پارت‌های آماده گرید متقارن ۲×۲ -->
+          <div class="time-presets-pills">
+            <span class="presets-hint">⚡ پارت‌های متداول:</span>
+            <div class="presets-grid-wrapper">
+              <button type="button" class="preset-pill-btn" data-mins="90">🎓 1.5 ساعته (دانشگاه)</button>
+              <button type="button" class="preset-pill-btn" data-mins="60">⏱️ 1 ساعت</button>
+              <button type="button" class="preset-pill-btn" data-mins="120">📚 2 ساعت</button>
+              <button type="button" class="preset-pill-btn" data-mins="45">⚡ 45 دقیقه</button>
+            </div>
+          </div>
+
+          <!-- بنر زنده تداخل زمانی -->
+          <div id="modal-conflict-banner" class="conflict-banner-box no-conflict">
+            <span class="conflict-icon">✅</span>
+            <span id="modal-conflict-msg" class="conflict-text">این بازه زمانی کاملاً آزاد است و تداخلی ندارد.</span>
+          </div>
+        </div>
+
+        <div class="input-field-group">
+          <label>وضعیت و رنگ کارت:</label>
+          <select id="weekly-status-select" class="task-select">
+            <option value="status-white" selected>⚪ در حال انجام (سفید)</option>
+            <option value="status-green">🟢 انجام‌شده و موفق (سبز)</option>
+            <option value="status-red">🔴 جامانده یا عقب‌افتاده (قرمز)</option>
+            <option value="status-blue">🔵 برنامه‌های آینده (آبی)</option>
+          </select>
+        </div>
+
+        <!-- فیلد یادداشت تسک -->
+        <div class="input-field-group">
+          <label>📝 یادداشت و نکات مهم (اختیاری):</label>
+          <textarea id="weekly-task-notes" class="task-textarea" placeholder="مثال: مباحث فصل سوم، حل تمرین‌های صفحه ۴۲ یا لینک فایل جزوه..." rows="2"></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 10px;">ثبت در جدول 📌</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ۵. مودال جزئیات، یادداشت و ویرایش وضعیت وظیفه -->
+  <div id="task-detail-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px); z-index: 3600;">
+    <div class="auth-card" style="max-width: 400px; max-height: 88vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px;">
+        <h3 id="modal-detail-title" style="font-size: 1.15rem; color: var(--accent-cyan); margin: 0;">عنوان وظیفه</h3>
+        <button type="button" id="close-task-detail-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+      
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem;">
+        <div style="background: var(--bg-primary); padding: 10px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <span id="lbl-detail-time-tag" style="color: var(--text-muted); font-size: 0.78rem;">⏱️ بازه زمانی:</span>
+          <div id="modal-detail-time" style="font-weight: 700; color: var(--accent-amber); font-family: 'JetBrains Mono'; margin-top: 3px;">09:00 - 10:30</div>
+        </div>
+
+        <div style="background: var(--bg-primary); padding: 10px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <span id="lbl-detail-status-tag" style="color: var(--text-muted); font-size: 0.78rem;">🎨 وضعیت رنگی وظیفه:</span>
+          <select id="modal-detail-status-select" class="task-select" style="width: 100%; margin-top: 6px;">
+            <option value="status-white">⚪ در حال انجام (سفید)</option>
+            <option value="status-green">🟢 انجام‌شده و موفق (سبز)</option>
+            <option value="status-red">🔴 عقب‌افتاده / جامانده (قرمز)</option>
+            <option value="status-blue">🔵 برنامه‌های آینده (آبی)</option>
+          </select>
+        </div>
+
+        <!-- ویرایش یادداشت وظیفه -->
+        <div style="background: var(--bg-primary); padding: 10px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <span id="lbl-detail-notes-tag" style="color: var(--text-muted); font-size: 0.78rem;">📝 یادداشت این برنامه:</span>
+          <textarea id="modal-detail-notes" class="task-textarea" placeholder="یادداشتی برای این برنامه ثبت نشده است..." rows="2" style="margin-top: 6px; width: 100%;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 15px;">
+        <button type="button" id="modal-save-detail-btn" class="btn-primary" style="flex: 2;">ذخیره تغییرات 💾</button>
+        <button type="button" id="modal-delete-task-btn" class="btn-primary" style="flex: 1; background: var(--accent-red); color: white;">حذف 🗑️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ۶. مودال راهنمای مرکز فرماندهی و چیدمان برنامه -->
+  <div id="planner-guide-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 3500;">
+    <div class="guide-container">
+      <div class="mascot-actor-wrap">
+        <div class="catmodoro-mascot-box">
+          <span style="font-size: 2.2rem;">📅</span>
+        </div>
+        <div class="mascot-speech-bubble">
+          <h3 id="pg-modal-title">راهنمای کار با مرکز فرماندهی و چیدمان برنامه 🐾</h3>
+          <p id="pg-modal-desc">این بخش اتاق فرماندهی هفتگی شماست؛ همه‌چیز سریع، دقیق و متمرکز:</p>
+        </div>
+      </div>
+      <div class="guide-cards-grid">
+        <div class="guide-step-card">
+          <span class="guide-icon">🎓</span>
+          <h4>چیدمان برنامه</h4>
+          <p>با ماوس یا لمس صفحه روی ساعات 06:00 تا 24:00 بکشید تا بازه زمانی ایجاد شود؛ سیستم خودکار تداخل‌ها را هشدار می‌دهد.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">🤖</span>
+          <h4>برنامه پیشنهادی AI</h4>
+          <p>با زدن دکمه ربات، کارت هوشمند بالا می‌آید و برنامه را در ۳ سطح اولویت سطر به سطر آماده اضافه کردن می‌کند.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">📋</span>
+          <h4>چک‌لیست روزانه</h4>
+          <p>دید ستونی روزهای هفته؛ تکالیف و کلاس‌های هر روز را به شکل کارت‌های دسته‌بندی‌شده و مرتب مدیریت کنید.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">🟡</span>
+          <h4>وضعیت زرد هوشمند خودکار</h4>
+          <p>اگر ساعت کلاسی به اتمام برسد و سبز نشده باشد، سیستم خودکار کارت را به رنگ زرد (سپری‌شده) درمی‌آورد.</p>
+        </div>
+      </div>
+      <button type="button" id="close-planner-guide-btn" class="btn-primary" style="margin-top: 1.2rem; width: 100%;">فهمیدم، بزن بریم 🚀</button>
+    </div>
+  </div>
+
+  <!-- ۷. کارت پاپ‌آپ برنامه پیشنهادی هوش مصنوعی (سطر به سطر با ۳ سطح اولویت و پیش‌نمایش ماتریسی) -->
+  <div id="ai-suggest-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 3200;">
+    <div class="auth-card ai-suggest-card" style="max-width: 780px; width: 95%; text-align: right; max-height: 88vh; overflow-y: auto; padding: 1.4rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.8rem;">🤖</span>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; color: var(--accent-cyan);">برنامه‌ساز هوشمند تحصیلی (AI Planner) 🐾</h3>
+            <p style="margin: 2px 0 0; font-size: 0.78rem; color: var(--text-muted);">ثبت سطر به سطر با تفکیک ۳ سطح اولویت و پیش‌نمایش ماتریسی قبل از اعمال نهایی.</p>
+          </div>
+        </div>
+        <button type="button" id="close-ai-suggest-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.3rem; cursor: pointer;">✕</button>
+      </div>
+
+      <!-- ردیف ورود سریع سطر جدید توسط دانشجو -->
+      <form id="ai-quick-add-row-form" style="background: var(--bg-primary); padding: 12px; border-radius: 14px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-cyan);">➕ افزودن درس جدید به پکیج پیشنهادی:</span>
+        <div style="display: grid; grid-template-columns: 2fr 1.3fr 1fr 1fr auto; gap: 8px; align-items: flex-end;">
+          <div class="input-field-group">
+            <label style="font-size: 0.74rem;">نام درس یا مبحث:</label>
+            <input type="text" id="ai-input-title" placeholder="مثال: ریاضی مهندسی..." required>
+          </div>
+          <div class="input-field-group">
+            <label style="font-size: 0.74rem;">سطح اولویت:</label>
+            <select id="ai-input-tier" class="task-select">
+              <option value="high">🔥 سطح ۱: حیاتی (عمیق)</option>
+              <option value="medium" selected>⚡ سطح ۲: عادی (روتین)</option>
+              <option value="low">🌱 سطح ۳: مرور (سبک)</option>
+            </select>
+          </div>
+          <div class="input-field-group">
+            <label style="font-size: 0.74rem;">روز هفته:</label>
+            <select id="ai-input-day" class="task-select">
+              <option value="sat">شنبه</option>
+              <option value="sun">یکشنبه</option>
+              <option value="mon">دوشنبه</option>
+              <option value="tue">سه‌شنبه</option>
+              <option value="wed">چهارشنبه</option>
+              <option value="thu">پنج‌شنبه</option>
+              <option value="fri">جمعه</option>
+            </select>
+          </div>
+          <div class="input-field-group">
+            <label style="font-size: 0.74rem;">مدت زمان:</label>
+            <select id="ai-input-duration" class="task-select">
+              <option value="1.5">🎓 ۱.۵ ساعته</option>
+              <option value="1.0">⏱️ ۱ ساعته</option>
+              <option value="2.0">📚 ۲ ساعته</option>
+              <option value="0.75">⚡ ۴۵ دقیقه</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" style="height: 38px; padding: 0 14px; font-size: 0.82rem;">+ افزودن سطر</button>
+        </div>
+      </form>
+
+      <!-- کانتینر دسته‌بندی ۳ سطحی دروس -->
+      <div id="ai-suggested-rows-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+
+      <!-- پیش‌نمایش زنده ماتریسی آزمایشی (Draft Preview) -->
+      <div id="ai-draft-preview-box" class="ai-draft-preview-container" style="margin-top: 14px; background: var(--bg-primary); border: 1.5px dashed var(--accent-cyan); border-radius: 14px; padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-amber);">👁️ پیش‌نمایش چیدمان هوشمند در خط زمانی ۰۶:۰۰ تا ۲۴:۰۰:</span>
+          <span id="ai-preview-summary-badge" style="font-size: 0.74rem; color: var(--text-muted); font-family: 'JetBrains Mono';">0 درس چیده شده</span>
+        </div>
+        <div id="ai-mini-matrix-preview" style="max-height: 140px; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: 4px;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 12px; flex-wrap: wrap; gap: 8px;">
+        <button type="button" id="ai-add-all-suggested-btn" class="btn-primary" style="padding: 9px 20px; font-size: 0.88rem; background: linear-gradient(135deg, var(--accent-green), #2ea043); color: white;">
+          🚀 تأیید و ثبت در جدول اصلی چیدمان
+        </button>
+        <button type="button" id="ai-close-suggest-footer-btn" class="preset-pill-btn" style="padding: 8px 16px;">
+          بستن پنجره
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ۸. راهنمای اختصاصی میز تمرکز و تکالیف -->
+  <div id="focus-desk-guide-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 3500;">
+    <div class="guide-container">
+      <div class="mascot-actor-wrap">
+        <div class="catmodoro-mascot-box">
+          <span style="font-size: 2.2rem;">🎯</span>
+        </div>
+        <div class="mascot-speech-bubble">
+          <h3>راهنمای کار با میز تمرکز و تکالیف امروز 🐾</h3>
+          <p>این بخش طراحی شده تا بدون حواس‌پرتی روی تکالیف جاری کار کنی:</p>
+        </div>
+      </div>
+      <div class="guide-cards-grid">
+        <div class="guide-step-card">
+          <span class="guide-icon">🔄</span>
+          <h4>همگام‌سازی کامل با تقویم</h4>
+          <p>هر درسی که در مرکز فرماندهی برای امروز چیده باشی، خودکار اینجا قرار می‌گیرد.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">🛡️</span>
+          <h4>حفاظت از برنامه (بدون حذف تصادفی)</h4>
+          <p>در این بخش امکان حذف وجود ندارد تا تمرکزت به هم نریزد؛ فقط می‌توانی تسک اضافه کنی و وضعیتش را مشخص کنی.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">🎨</span>
+          <h4>چرخه 4 رنگ دستی + زرد خودکار</h4>
+          <p>سفید (جاری)، سبز (انجام شد)، قرمز (جامانده)، آبی (آینده) و زرد هوشمند خودکار برای کارهای سپری‌شده.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">📌</span>
+          <h4>پین مستقیم روی تایمر</h4>
+          <p>با زدن دکمه 📌 هدف اصلی‌ات را بالای ثانیه‌شمار پومودورو پین کن تا متمرکز بمانی.</p>
+        </div>
+      </div>
+      <button type="button" id="close-focus-guide-btn" class="btn-primary" style="margin-top: 1.2rem; width: 100%;">متوجه شدم 🚀</button>
+    </div>
+  </div>
+
+  <!-- ۹. راهنمای اختصاصی کتابخانه منابع -->
+  <div id="library-guide-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 3500;">
+    <div class="guide-container">
+      <div class="mascot-actor-wrap">
+        <div class="catmodoro-mascot-box">
+          <span style="font-size: 2.2rem;">📚</span>
+        </div>
+        <div class="mascot-speech-bubble">
+          <h3>راهنمای کار با کتابخانه و منابع شخصی 🐾</h3>
+          <p>اینجا قفسه اختصاصی ابزارها، لینک‌ها و فایل‌های مهم تحصیلی و کاری شماست:</p>
+        </div>
+      </div>
+      <div class="guide-cards-grid">
+        <div class="guide-step-card">
+          <span class="guide-icon">📂</span>
+          <h4>قفسه‌بندی 4 گانه تخصصی</h4>
+          <p>جزوه‌ها، دوره‌ها، سایت‌ها و 14 پلتفرم علمی و دانشگاهی مرجع برای دسترسی فوری.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">➕</span>
+          <h4>افزودن لینک و درایو شخصی</h4>
+          <p>لینک جزوات، گوگل درایو و ویدیوهای آموزشی‌ات را با یک کلیک در قفسه مربوطه ذخیره کن.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">🔗</span>
+          <h4>دسترسی امن در تب جدید</h4>
+          <p>تمام لینک‌ها با کلیک در تب جدید باز می‌شوند تا تمرکزت روی صفحه برنامه حفظ شود.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">🗑️</span>
+          <h4>مدیریت و حذف آسان</h4>
+          <p>با دکمه ✕ کنار هر منبع شخصی، در هر زمان می‌توانی قفسه‌ات را ویرایش و مرتب کنی.</p>
+        </div>
+      </div>
+      <button type="button" id="close-library-guide-btn" class="btn-primary" style="margin-top: 1.2rem; width: 100%;">فهمیدم، بزن بریم 🚀</button>
+    </div>
+  </div>
+
+  <!-- ۱۰. مودال افزودن منبع به کتابخانه -->
+  <div id="add-library-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 3000;">
+    <div class="auth-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <h2 style="font-size: 1.2rem; margin: 0;">📚 افزودن منبع جدید</h2>
+        <button type="button" id="close-library-modal-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+      <form id="library-item-form" class="auth-form">
+        <div class="input-field-group">
+          <label>طبقه / دسته‌بندی:</label>
+          <select id="lib-category-select" class="task-select">
+            <option value="notes">📝 جزوه‌ها و PDFها</option>
+            <option value="courses">🎥 منابع و کورس‌ها</option>
+            <option value="websites">🌐 سایت‌ها و ابزارها</option>
+          </select>
+        </div>
+        <div class="input-field-group">
+          <label>نام منبع:</label>
+          <input type="text" id="lib-title" placeholder="مثال: کورس جاوااسکریپت" required>
+        </div>
+        <div class="input-field-group">
+          <label>لینک (URL) یا آدرس درایو:</label>
+          <input type="url" id="lib-url" placeholder="https://..." required>
+        </div>
+        <button type="submit" class="btn-primary" style="margin-top: 10px;">ذخیره در قفسه 📖</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ۱۱. مودال راهنمای سراسری مسکات گربه (با متن اصلاح‌شده) -->
+  <div id="guide-modal" class="fullscreen-overlay hidden" style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 3500;">
+    <div class="guide-container">
+      <div class="mascot-actor-wrap">
+        <div class="catmodoro-mascot-box" title="میو! من کت‌مودورو هستم 🐾">
+          <svg class="catmodoro-vector" viewBox="0 0 100 100">
+            <path class="cat-ear cat-ear-left" d="M 27 40 L 17 18 L 38 29 Z" />
+            <path class="cat-ear cat-ear-right" d="M 73 40 L 83 18 L 62 29 Z" />
+            <path class="headphone-band" d="M 20 46 A 34 34 0 0 1 80 46" />
+            <ellipse class="cat-face" cx="50" cy="55" rx="30" ry="26" />
+            <rect class="headphone-cup" x="14" y="40" width="8" height="18" rx="4" />
+            <rect class="headphone-cup" x="78" y="40" width="8" height="18" rx="4" />
+            <g class="cat-eye-group">
+              <ellipse class="cat-eye" cx="39" cy="53" rx="4" ry="4.5" />
+              <circle class="cat-eye-shine" cx="40.5" cy="51.5" r="1.3" fill="#ffffff" />
+            </g>
+            <g class="cat-eye-group">
+              <ellipse class="cat-eye" cx="61" cy="53" rx="4" ry="4.5" />
+              <circle class="cat-eye-shine" cx="62.5" cy="51.5" r="1.3" fill="#ffffff" />
+            </g>
+            <polygon points="50,60 47,57 53,57" class="cat-nose" />
+            <path class="cat-mouth" d="M 46 62 Q 50 65 50 61 Q 50 65 54 62" />
+            <line x1="22" y1="58" x2="32" y2="59" class="cat-whisker" />
+            <line x1="21" y1="63" x2="31" y2="62" class="cat-whisker" />
+            <line x1="78" y1="58" x2="68" y2="59" class="cat-whisker" />
+            <line x1="79" y1="63" x2="69" y2="62" class="cat-whisker" />
+          </svg>
+        </div>
+        <div class="mascot-speech-bubble">
+          <h3>میو! سلام رفیق، من Catmodoro ، راهنمای Focus Hub هستم 🐾</h3>
+          <p>اینجا میز کار متمرکز توئه! بیا کمکت کنم بهترین استفاده رو ازش ببری:</p>
+        </div>
+      </div>
+
+      <div class="guide-cards-grid">
+        <div class="guide-step-card">
+          <span class="guide-icon">🎯</span>
+          <h4>میز تمرکز</h4>
+          <p>تایمر پومودورو رو استارت بزن، تسک‌های روزت رو تیک بزن یا هدف مهم رو پین کن روی تایمر!</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">📅</span>
+          <h4>مرکز فرماندهی</h4>
+          <p>با ماوس یا لمس روی جدول درگ کن و برنامه‌ت رو بچین؛ وضعیت رنگی و تداخل‌ها رو زنده ببین!</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">📊</span>
+          <h4>رکوردها و گزارش تحلیلی</h4>
+          <p>نمودار توزیع ساعات، شاخص تعادل ۳ سطحی و ارزیاب هوشمند عملکرد هفتگی.</p>
+        </div>
+        <div class="guide-step-card">
+          <span class="guide-icon">📚</span>
+          <h4>کتابخانه منابع</h4>
+          <p>لینک دوره‌ها، فایل‌ها و ابزارهای پرکاربردت رو قفسه‌بندی کن تا همیشه دَمِ دست باشن.</p>
+        </div>
+      </div>
+
+      <button type="button" id="close-guide-btn" class="btn-primary" style="margin-top: 1.5rem; width: 100%;">فهمیدم، بریم سر کار! 🚀</button>
+    </div>
+  </div>
+
+  <!-- ۱۲. هدر اصلی برنامه -->
+  <header class="main-header hidden" id="main-header">
+    <div class="brand-container" style="display: flex; align-items: center; gap: 10px;">
+      <div class="header-cat-mini" title="Catmodoro 🐾">
+        <svg class="catmodoro-mini-vector" viewBox="0 0 100 100">
+          <path class="cat-ear cat-ear-left" d="M 27 40 L 17 18 L 38 29 Z" />
+          <path class="cat-ear cat-ear-right" d="M 73 40 L 83 18 L 62 29 Z" />
+          <path class="headphone-band" d="M 20 46 A 34 34 0 0 1 80 46" />
+          <ellipse class="cat-face" cx="50" cy="55" rx="30" ry="26" />
+          <rect class="headphone-cup" x="14" y="40" width="8" height="18" rx="4" />
+          <rect class="headphone-cup" x="78" y="40" width="8" height="18" rx="4" />
+          <g class="cat-eye-group">
+            <ellipse class="cat-eye" cx="39" cy="53" rx="4" ry="4.5" />
+            <circle class="cat-eye-shine" cx="40.5" cy="51.5" r="1.3" fill="#ffffff" />
+          </g>
+          <g class="cat-eye-group">
+            <ellipse class="cat-eye" cx="61" cy="53" rx="4" ry="4.5" />
+            <circle class="cat-eye-shine" cx="62.5" cy="51.5" r="1.3" fill="#ffffff" />
+          </g>
+          <polygon points="50,60 47,57 53,57" class="cat-nose" />
+          <path class="cat-mouth" d="M 46 62 Q 50 65 50 61 Q 50 65 54 62" />
+        </svg>
+      </div>
+
+      <div class="brand-text">
+        <h1 class="brand-title">Focus Hub</h1>
+        <span class="brand-slogan" id="header-user-role">در حال بارگذاری...</span>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div class="header-clock" id="live-clock-widget" title="ساعت زنده">
+        <span id="global-live-time">00:00:00</span>
+      </div>
+      <button type="button" id="open-guide-btn" class="control-btn" title="راهنمای سریع Focus Hub">🐱 راهنما</button>
+      <button type="button" id="open-edit-btn" class="control-btn" title="ویرایش پروفایل">⚙️ تنظیمات</button>
+      <div class="user-badge" id="header-user-name">👤 کاربر</div>
+    </div>
+  </header>
+
+  <!-- ۱۳. کانتینر اصلی داشبورد -->
+  <main class="app-container hidden" id="app-container">
+
+    <!-- میدان اصلی داشبورد (۴ خانه) -->
+    <section id="main-hub" class="hub-grid">
+      <div class="hub-card" data-target="house-focus">
+        <div class="hub-card-icon">🎯</div>
+        <h3>میز تمرکز امروز</h3>
+        <p>تایمر پومودورو، لیست تکالیف جاری و اهداف پین‌شده</p>
+      </div>
+      <div class="hub-card" data-target="house-planner">
+        <div class="hub-card-icon">📅</div>
+        <h3>مرکز فرماندهی</h3>
+        <p>تقویم ماتریسی هفتگی 06:00 تا 24:00 با کشیدن ماوس و لمس</p>
+      </div>
+      <div class="hub-card" data-target="house-analytics">
+        <div class="hub-card-icon">📊</div>
+        <h3>رکوردها و گزارش تحلیلی</h3>
+        <p>نمودار توزیع ساعات، تحلیل هفتگی و سنجش عملکرد</p>
+      </div>
+      <div class="hub-card" data-target="house-library">
+        <div class="hub-card-icon">📚</div>
+        <h3>کتابخانه منابع</h3>
+        <p>قفسه‌بندی لینک‌ها، جزوات، دوره‌ها و ابزارهای پرکاربرد</p>
+      </div>
+    </section>
+
+    <!-- خانه ۱: میز تمرکز امروز -->
+    <section id="house-focus" class="house-page hidden">
+      <div class="house-header" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button type="button" class="back-to-hub-btn">🏠 برگشت به میدان اصلی</button>
+          <h2>🎯 میز تمرکز امروز</h2>
+        </div>
+        <button type="button" id="open-focus-guide-btn" class="control-btn" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">💡 راهنمای این بخش</button>
+      </div>
+      <div class="house-content">
+        <div class="dashboard-grid">
+          
+          <article class="widget-card timer-card">
+            <div class="widget-header">
+              <h2>⏱ تایمر تمرکز</h2>
+              <span class="cat-status" id="cat-status-badge">حالت: آماده مطالعه 🐾</span>
+            </div>
+            <div class="timer-controls-selects">
+              <div class="select-group">
+                <label>📚 زمان مطالعه:</label>
+                <select id="study-time-select" class="task-select">
+                  <option value="1500" selected>25 دقیقه (استاندارد)</option>
+                  <option value="2700">45 دقیقه (عمیق)</option>
+                  <option value="3600">60 دقیقه (سنگین)</option>
+                  <option value="5400">90 دقیقه (کنکوری)</option>
+                </select>
+              </div>
+              <div class="select-group">
+                <label>☕ زمان استراحت:</label>
+                <select id="break-time-select" class="task-select">
+                  <option value="300" selected>5 دقیقه (کوتاه)</option>
+                  <option value="600">10 دقیقه (متوسط)</option>
+                  <option value="900">15 دقیقه (بلند)</option>
+                </select>
+              </div>
+              <div class="select-group action-group">
+                <button type="button" id="freeflow-mode-btn" class="control-btn freeflow-btn">حالت آزاد ⏱️</button>
+              </div>
+            </div>
+            
+            <div id="active-task-wrapper" style="display: none; margin: 0.5rem auto 1rem; text-align: center;">
+              <span id="active-focus-task-text" style="display: inline-block; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 5px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 700;">
+                🎯 هدف فعلی
+              </span>
+            </div>
+
+            <!-- گربه زنده کت‌مودورو بالای تایمر -->
+            <div class="timer-mascot-wrap" style="display: flex; justify-content: center; margin: 0.2rem auto 0.6rem;">
+              <div class="timer-cat-mascot" id="timer-cat-mascot" title="میو! من کت‌مودورو هستم؛ کلیک کن! 🐾">
+                <svg class="catmodoro-timer-vector" viewBox="0 0 100 100">
+                  <path class="cat-ear cat-ear-left" d="M 27 40 L 17 18 L 38 29 Z" />
+                  <path class="cat-ear cat-ear-right" d="M 73 40 L 83 18 L 62 29 Z" />
+                  <path class="headphone-band" d="M 20 46 A 34 34 0 0 1 80 46" />
+                  <ellipse class="cat-face" cx="50" cy="55" rx="30" ry="26" />
+                  <rect class="headphone-cup" x="14" y="40" width="8" height="18" rx="4" />
+                  <rect class="headphone-cup" x="78" y="40" width="8" height="18" rx="4" />
+                  <g class="cat-eye-group">
+                    <ellipse class="cat-eye" cx="39" cy="53" rx="4" ry="4.5" />
+                    <circle class="cat-eye-shine" cx="40.5" cy="51.5" r="1.3" fill="#ffffff" />
+                  </g>
+                  <g class="cat-eye-group">
+                    <ellipse class="cat-eye" cx="61" cy="53" rx="4" ry="4.5" />
+                    <circle class="cat-eye-shine" cx="62.5" cy="51.5" r="1.3" fill="#ffffff" />
+                  </g>
+                  <polygon points="50,60 47,57 53,57" class="cat-nose" />
+                  <path class="cat-mouth" d="M 46 62 Q 50 65 50 61 Q 50 65 54 62" />
+                  <line x1="22" y1="58" x2="32" y2="59" class="cat-whisker" />
+                  <line x1="21" y1="63" x2="31" y2="62" class="cat-whisker" />
+                  <line x1="78" y1="58" x2="68" y2="59" class="cat-whisker" />
+                  <line x1="79" y1="63" x2="69" y2="62" class="cat-whisker" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="timer-display-wrapper">
+              <div class="timer-countdown" id="timer-display">
+                <span id="timer-minutes">25</span><span class="colon">:</span><span id="timer-seconds">00</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="timer-progress-bar"></div>
+              </div>
+            </div>
+
+            <div class="timer-actions">
+              <button type="button" id="timer-start-btn" class="action-btn start-btn">شروع تمرکز</button>
+              <button type="button" id="timer-pause-btn" class="action-btn pause-btn" disabled>مکث</button>
+              <button type="button" id="timer-reset-btn" class="action-btn reset-btn">ریست</button>
+            </div>
+          </article>
+
+          <!-- لیست تکالیف امروز با برچسب ساعت شروع و پایان شفاف -->
+          <article class="widget-card tasks-card">
+            <div class="widget-header">
+              <h2>📝 تکالیف و کارهای امروز (همگام با تقویم)</h2>
+              <span class="task-counter" id="task-counter">0 تسک باقی‌مانده</span>
+            </div>
+
+            <form id="add-task-form" class="task-input-form-neon">
+  <!-- سطر اول: عنوان تسک + انتخابگر وضعیت رنگی -->
+  <div class="task-input-main-row">
+    <div class="task-title-input-wrap">
+      <span class="input-glow-icon">✏️</span>
+      <input type="text" id="task-input" placeholder="عنوان تکلیف، درس یا هدف امروز..." required autocomplete="off">
+    </div>
+    <div class="task-status-select-wrap">
+      <select id="task-status-input" class="task-status-pill-select">
+        <option value="status-white" selected>⚪ جاری (سفید)</option>
+        <option value="status-green">🟢 انجام شد (سبز)</option>
+        <option value="status-red">🔴 عقب‌افتاده (قرمز)</option>
+        <option value="status-blue">🔵 آینده (آبی)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- سطر دوم: انتخابگرهای ساعت با هماهنگی تم + دکمه نئونی ثبت -->
+  <div class="task-input-sub-row">
+    <div class="task-times-group">
+      <div class="time-chip-box">
+        <span class="time-chip-icon">🚀</span>
+        <span class="time-chip-label">شروع:</span>
+        <input type="time" id="task-start-time" class="time-chip-input" title="ساعت شروع">
+      </div>
+      <span class="time-flow-sep">←</span>
+      <div class="time-chip-box">
+        <span class="time-chip-icon">🏁</span>
+        <span class="time-chip-label">پایان:</span>
+        <input type="time" id="task-end-time" class="time-chip-input" title="ساعت پایان">
+      </div>
+    </div>
+
+    <button type="submit" class="submit-task-neon-btn">
+      <span>+ ثبت در میز تمرکز</span>
+      <span class="btn-paw">🐾</span>
+    </button>
+  </div>
+</form>
+
+            <div class="tasks-list-container" style="margin-top: 10px;">
+              <ul id="tasks-list" class="tasks-list"></ul>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- خانه ۲: مرکز فرماندهی و چیدمان برنامه (با سلکتور چندبرنامه‌ای و خروجی عکس) -->
+    <section id="house-planner" class="house-page hidden">
+      <div class="house-header" style="flex-direction: column; align-items: stretch; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <button type="button" class="back-to-hub-btn">🏠 برگشت به میدان اصلی</button>
+            <h2 id="h2-main-title">📅 مرکز فرماندهی و چیدمان برنامه</h2>
+            
+            <!-- سلکتور منوی چندبرنامه‌ای -->
+            <div class="multi-plan-dropdown-wrap">
+              <button type="button" id="plan-dropdown-trigger-btn" class="plan-trigger-badge">
+                <span class="plan-layers-icon">📑</span>
+                <span id="current-active-plan-name">برنامه اصلی</span>
+                <span id="current-active-plan-count" class="plan-sub-count">8 درس</span>
+                <span class="dropdown-chevron">▾</span>
+              </button>
+              <div id="plan-dropdown-menu" class="plan-menu-floating hidden">
+                <div class="plan-menu-item active" data-plan-id="main">
+                  <span>📑 برنامه اصلی (ترم جاری)</span>
+                  <span class="plan-item-tag">فعال</span>
+                </div>
+                <div class="plan-menu-item" data-plan-id="exam">
+                  <span>⚡ سناریو فشرده شب امتحان</span>
+                </div>
+                <div class="plan-menu-item" data-plan-id="weekend">
+                  <span>☕ سناریو مطالعاتی آخر هفته</span>
+                </div>
+                <div class="plan-menu-divider"></div>
+                <div class="plan-menu-item add-plan-action" id="create-new-plan-btn">
+                  <span>➕ ایجاد برنامه جدید...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div class="calendar-mode-switcher">
+              <button type="button" id="view-mode-timeline-btn" class="cal-switch-btn active" title="چیدمان برنامه">🎓 چیدمان برنامه 🐾</button>
+              <button type="button" id="view-mode-tasks-btn" class="cal-switch-btn" title="دید کارتی روزانه">📋 چک‌لیست روزانه</button>
+            </div>
+            
+            <button type="button" id="open-ai-suggest-btn" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #0284c7); color: #0b1118; font-weight: 800; padding: 7px 15px; font-size: 0.85rem; box-shadow: 0 0 12px var(--accent-glow);">
+              🤖 برنامه پیشنهادی AI ✨
+            </button>
+            <button type="button" id="export-schedule-btn" class="control-btn" style="border-color: var(--accent-amber); color: var(--accent-amber);" title="ذخیره به صورت PDF یا عکس">
+              📸 خروجی تصویر و PDF
+            </button>
+            <button type="button" id="open-add-weekly-btn" class="btn-primary" style="padding: 7px 16px; font-size: 0.85rem;">
+              + افزودن درس دستی
+            </button>
+            <button type="button" id="open-planner-guide-btn" class="control-btn" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">
+              💡 راهنمای این بخش
+            </button>
+          </div>
+        </div>
+
+        <div class="termchin-summary-bar">
+          <div class="summary-chip">⏱️ <span id="lbl-weekly-hours-txt">کل ساعات هفتگی: </span><strong id="weekly-total-hours">0 ساعت</strong></div>
+          <div class="summary-chip">📚 <span id="lbl-weekly-courses-txt">تعداد برنامه‌ها: </span><strong id="weekly-total-courses">0 تسک</strong></div>
+          <div class="summary-chip" id="conflict-status-chip" style="color: var(--accent-green);">✨ وضعیت: چیدمان بدون تداخل و منظم</div>
+          <div class="summary-chip" id="drag-hint-chip" style="margin-right: auto; color: var(--accent-amber); font-size: 0.76rem;">💡 با ماوس یا لمس صفحه بکشید تا بازه زمانی در چیدمان برنامه ایجاد شود! 🐾</div>
+        </div>
+      </div>
+
+      <div class="house-content" style="padding: 0;">
+        <article class="widget-card weekly-full-card" style="border: none; background: transparent; padding: 0;">
+          <div class="termchin-schedule-container" id="termchin-matrix-board"></div>
+          <div class="weekly-grid hidden" id="weekly-view-container"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- خانه ۳: رکوردها و گزارش تحلیلی عمیق -->
+    <section id="house-analytics" class="house-page hidden">
+      <div class="house-header">
+        <button type="button" class="back-to-hub-btn">🏠 برگشت به میدان اصلی</button>
+        <h2>📊 رکوردها، داشبورد تحلیلی و اهداف</h2>
+      </div>
+      <div class="house-content">
+        <!-- رکوردهای کلیدی ۴ گانه -->
+        <div class="records-grid">
+          <div class="record-box">
+            <span class="record-icon">⏱️</span>
+            <div class="record-val" id="total-pomodoro-count">0</div>
+            <div class="record-title">پومودوروهای تکمیل‌شده</div>
+          </div>
+          <div class="record-box">
+            <span class="record-icon">⏳</span>
+            <div class="record-val" id="total-focus-minutes">0</div>
+            <div class="record-title">کل دقایق تمرکز عمیق</div>
+          </div>
+          <div class="record-box">
+            <span class="record-icon">🎯</span>
+            <div class="record-val" id="completed-tasks-count">0</div>
+            <div class="record-title">تکالیف انجام‌شده</div>
+          </div>
+          <div class="record-box">
+            <span class="record-icon">🔥</span>
+            <div class="record-val" id="streak-days">1</div>
+            <div class="record-title">زنجیره روزهای مطالعه</div>
+          </div>
+        </div>
+
+        <!-- ماژول‌های تحلیل عمیق اهداف و توزیع بار کاری -->
+        <div class="analytics-deep-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-top: 1.2rem;">
+          <!-- نمودار میله‌ای بصری توزیع ساعات هفتگی -->
+          <article class="widget-card">
+            <div class="widget-header">
+              <h2>📈 نمودار توزیع بار مطالعاتی در هفته</h2>
+              <span id="analytics-chart-sub" style="font-size: 0.75rem; color: var(--text-muted);">تفکیک ساعات ۷ روز</span>
+            </div>
+            <div class="weekly-bar-chart" id="weekly-bar-chart-container"></div>
+          </article>
+
+          <!-- شاخص تعادل ۳ سطحی و وفاداری به برنامه -->
+          <article class="widget-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div class="widget-header">
+                <h2>⚖️ شاخص تعادل سطوح اولویت</h2>
+                <span id="priority-balance-score" style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700;">متعادل</span>
+              </div>
+              <div class="priority-meter-wrap" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 3px;">
+                    <span id="lbl-tier-high">🔥 سطح ۱ (حیاتی):</span>
+                    <strong id="meter-val-high">45%</strong>
+                  </div>
+                  <div class="progress-bar-container" style="height: 6px; margin: 0;"><div class="progress-bar-fill" id="meter-fill-high" style="width: 45%; background: var(--accent-red);"></div></div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 3px;">
+                    <span id="lbl-tier-medium">⚡ سطح ۲ (عادی):</span>
+                    <strong id="meter-val-medium">35%</strong>
+                  </div>
+                  <div class="progress-bar-container" style="height: 6px; margin: 0;"><div class="progress-bar-fill" id="meter-fill-medium" style="width: 35%; background: var(--accent-amber);"></div></div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 3px;">
+                    <span id="lbl-tier-low">🌱 سطح ۳ (مرور):</span>
+                    <strong id="meter-val-low">20%</strong>
+                  </div>
+                  <div class="progress-bar-container" style="height: 6px; margin: 0;"><div class="progress-bar-fill" id="meter-fill-low" style="width: 20%; background: var(--accent-green);"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px; background: var(--bg-primary); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+              <span id="lbl-completion-rate" style="font-size: 0.8rem;">🎯 نرخ وفاداری به تکالیف:</span>
+              <strong id="task-completion-rate-text" style="font-family: 'JetBrains Mono'; color: var(--accent-cyan); font-size: 1.1rem;">85%</strong>
+            </div>
+          </article>
+        </div>
+
+        <!-- موتور بازخورد هوشمند مسکات Catmodoro -->
+        <article class="widget-card" style="margin-top: 1.2rem;">
+          <div class="widget-header" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.8rem;">🧠</span>
+              <div>
+                <h2 id="mascot-review-title">ارزیاب هوشمند عملکرد و پیشنهادات مسکات</h2>
+                <p id="mascot-review-desc" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">توصیه‌های تحلیلی اختصاصی برای تعادل انرژی و پیشرفت مطالعاتی</p>
+              </div>
+            </div>
+            <button type="button" id="run-weekly-analysis-btn" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #3fb950); color: #0b1118; font-weight: 800; padding: 8px 18px;">
+              ⚡ به‌روزرسانی تحلیل هوشمند
+            </button>
+          </div>
+
+          <div id="weekly-analysis-results" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 1rem;"></div>
+        </article>
+
+        <!-- موتور بازخورد هوشمند مسکات Catmodoro -->
+        <article class="widget-card" style="margin-top: 1.2rem;">
+          <div class="widget-header" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 1.8rem;">🧠</span>
+              <div>
+                <h2 id="mascot-review-title">ارزیاب هوشمند عملکرد و پیشنهادات مسکات</h2>
+<p id="mascot-review-desc" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">توصیه‌های تحلیلی اختصاصی برای تعادل انرژی و پیشرفت مطالعاتی</p>
+              </div>
+            </div>
+            <button type="button" id="run-weekly-analysis-btn" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #3fb950); color: #0b1118; font-weight: 800; padding: 8px 18px;">
+              ⚡ به‌روزرسانی تحلیل هوشمند
+            </button>
+          </div>
+
+          <div id="weekly-analysis-results" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 1rem;"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- خانه ۴: کتابخانه منابع شخصی -->
+    <section id="house-library" class="house-page hidden">
+      <div class="house-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button type="button" class="back-to-hub-btn">🏠 برگشت به میدان اصلی</button>
+          <h2>📚 کتابخانه و منابع شخصی</h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" id="open-library-guide-btn" class="control-btn" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">💡 راهنمای این بخش</button>
+          <button type="button" id="open-add-library-btn" class="btn-primary" style="padding: 8px 18px; font-size: 0.85rem;">+ افزودن منبع جدید</button>
+        </div>
+      </div>
+      <div class="house-content">
+        <div class="library-grid">
+          <div class="library-tier">
+            <h3 class="tier-title">📝 جزوه‌ها و PDFها</h3>
+            <ul class="library-list" id="lib-notes-list"></ul>
+          </div>
+          <div class="library-tier">
+            <h3 class="tier-title">🎥 منابع و کورس‌ها</h3>
+            <ul class="library-list" id="lib-courses-list"></ul>
+          </div>
+          <div class="library-tier">
+            <h3 class="tier-title">🌐 سایت‌ها و ابزارها</h3>
+            <ul class="library-list" id="lib-websites-list"></ul>
+          </div>
+          <div class="library-tier">
+            <h3 class="tier-title">✨ لیست پیشنهادات (14 پلتفرم مرجع)</h3>
+            <ul class="library-list" id="lib-suggested-list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ۱۴. فوتر اختصاصی سازنده -->
+  <footer class="main-footer developer-showcase hidden" id="main-footer">
+    <div class="dev-card-inner">
+      <div class="dev-avatar-wrap">
+        <span class="dev-avatar-icon">👨‍💻</span>
+      </div>
+      <div class="dev-info-text">
+        <div class="dev-name-row">
+          <span class="dev-label">طراحی و توسعه توسط</span>
+          <h3 class="dev-name">یاسین شیخ‌عبدی</h3>
+          <span class="dev-badge-core">Core Creator 🐾</span>
+        </div>
+        <p class="dev-tagline">خلق ابزارهای تمرکز و بهره‌وری نسل جدید برای دانش‌آموزان و دانشجویان</p>
+      </div>
+      <div class="dev-social-actions">
+        <a href="https://github.com/Yasinsheykhabdi" target="_blank" rel="noopener noreferrer" class="dev-btn github-btn" title="پروژه در گیت‌هاب">
+          <svg class="dev-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>گیت‌هاب من</span>
+          <span class="star-badge">⭐️ Star</span>
+        </a>
+        <a href="https://www.researcherweb.ir" target="_blank" rel="noopener noreferrer" class="dev-btn site-btn" title="وب‌سایت شخصی">
+          <span>🌐 وب‌سایت</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

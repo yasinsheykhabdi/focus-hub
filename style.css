@@ -1,0 +1,2366 @@
+/* ==========================================================================
+   Focus Hub Pro - Unified Master Stylesheet (style.css)
+   توسعه‌دهنده: یاسین شیخ‌عبدی 🐾
+   نسخه نهایی و کامل: تم‌های سه‌گانه داینامیک، هاور نئونی فراگیر، رفع باگ‌ها و i18n
+   ========================================================================== */
+
+/* ==========================================
+   ۱. متغیرها و پالت‌های رنگی تم‌ها
+   ========================================== */
+:root, [data-theme="neon"] {
+  --bg-primary: #0b1118; 
+  --bg-secondary: #131c26; 
+  --bg-card: #111a24;
+  --border-color: #1f2d3d; 
+  --border-focus: #38bdf8;
+  --text-main: #f0f6fc; 
+  --text-muted: #8b949e;
+  --accent-cyan: #38bdf8; 
+  --accent-amber: #eab308; 
+  --accent-red: #f85149;
+  --accent-green: #3fb950;
+  --accent-glow: rgba(56, 189, 248, 0.35);
+  --btn-primary-bg: #38bdf8; 
+  --btn-primary-text: #0b1118;
+  --grid-line-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] {
+  --bg-primary: #f8fafc; 
+  --bg-secondary: #ffffff; 
+  --bg-card: #ffffff;
+  --border-color: #cbd5e1; 
+  --border-focus: #f59e0b;
+  --text-main: #0f172a; 
+  --text-muted: #64748b;
+  --accent-cyan: #0284c7; 
+  --accent-amber: #f59e0b; 
+  --accent-red: #dc2626;
+  --accent-green: #16a34a;
+  --accent-glow: rgba(2, 132, 199, 0.25);
+  --btn-primary-bg: #0284c7; 
+  --btn-primary-text: #ffffff;
+  --grid-line-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #050505; 
+  --bg-secondary: #111111; 
+  --bg-card: #161616;
+  --border-color: #2a2a2a; 
+  --border-focus: #525252;
+  --text-main: #e5e5e5; 
+  --text-muted: #737373;
+  --accent-cyan: #06b6d4; 
+  --accent-amber: #eab308; 
+  --accent-red: #ef4444;
+  --accent-green: #22c55e;
+  --accent-glow: rgba(6, 182, 212, 0.25);
+  --btn-primary-bg: #222222; 
+  --btn-primary-text: #ffffff;
+  --grid-line-color: rgba(255, 255, 255, 0.04);
+}
+
+/* ==========================================
+   ۲. ریست و استایل‌های عمومی
+   ========================================== */
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
+
+html, body {
+  height: 100%;
+}
+
+body { 
+  background-color: var(--bg-primary); 
+  color: var(--text-main); 
+  font-family: 'Vazirmatn', sans-serif; 
+  line-height: 1.5; 
+  min-height: 100vh; 
+  display: flex; 
+  flex-direction: column; 
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button, input, select, textarea { 
+  font-family: inherit; 
+}
+
+.hidden { 
+  display: none !important; 
+}
+
+::-webkit-scrollbar { 
+  width: 6px; 
+  height: 6px; 
+}
+
+::-webkit-scrollbar-track { 
+  background: rgba(255, 255, 255, 0.02); 
+  border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb { 
+  background: var(--accent-cyan); 
+  border-radius: 10px; 
+  box-shadow: 0 0 6px var(--accent-glow); 
+}
+
+/* ==========================================
+   ۳. قانون هاور نئونی فراگیر (Universal Neon Hover)
+   ========================================== */
+button,
+.btn-primary,
+.control-btn,
+.action-btn,
+.preset-pill-btn,
+.theme-btn,
+.lang-btn,
+.cal-switch-btn,
+.pin-task-btn,
+.status-toggle-pill,
+.ai-item-action-btn,
+.del-lib-btn,
+.plan-trigger-badge,
+.add-task-btn {
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+button:hover,
+.btn-primary:hover,
+.control-btn:hover,
+.action-btn:hover,
+.preset-pill-btn:hover,
+.theme-btn:hover,
+.lang-btn:hover,
+.cal-switch-btn:hover,
+.pin-task-btn:hover,
+.status-toggle-pill:hover,
+.ai-item-action-btn:hover,
+.del-lib-btn:hover,
+.plan-trigger-badge:hover,
+.add-task-btn:hover {
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 14px var(--accent-glow), 0 0 4px var(--accent-cyan) !important;
+  transform: translateY(-1.5px);
+}
+
+button:active,
+.btn-primary:active,
+.control-btn:active,
+.action-btn:active,
+.preset-pill-btn:active,
+.theme-btn:active,
+.lang-btn:active,
+.cal-switch-btn:active,
+.pin-task-btn:active,
+.status-toggle-pill:active,
+.ai-item-action-btn:active,
+.plan-trigger-badge:active,
+.add-task-btn:active {
+  transform: scale(0.96) !important;
+}
+
+/* ==========================================
+   ۴. پرده ورودی اینترو و احراز هویت
+   ========================================== */
+.fullscreen-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background-color: var(--bg-primary); 
+  z-index: 9999; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  transition: opacity 0.5s ease; 
+}
+
+.splash-content { 
+  text-align: center; 
+  animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+@keyframes popIn { 
+  0% { transform: scale(0.8); opacity: 0; } 
+  100% { transform: scale(1); opacity: 1; } 
+}
+
+.splash-logo-wrap img { 
+  width: 170px; 
+  height: 170px; 
+  border-radius: 36px; 
+  border: 3px solid var(--accent-cyan); 
+  box-shadow: 0 0 50px var(--accent-glow); 
+  margin-bottom: 1.2rem; 
+  object-fit: cover; 
+}
+
+.splash-title { 
+  font-size: 2.1rem; 
+  font-weight: 800; 
+  letter-spacing: 1px; 
+}
+
+.splash-subtitle { 
+  color: var(--text-muted); 
+  font-size: 0.9rem; 
+  margin-bottom: 1.8rem; 
+}
+
+.splash-loader-bar { 
+  width: 190px; 
+  height: 4px; 
+  background: var(--bg-secondary); 
+  border-radius: 10px; 
+  margin: 0 auto; 
+  overflow: hidden; 
+}
+
+.splash-loader-fill { 
+  width: 0%; 
+  height: 100%; 
+  background: var(--accent-cyan); 
+  animation: splashLoad 1.3s ease-in-out forwards; 
+}
+
+@keyframes splashLoad { 
+  0% { width: 0%; } 
+  100% { width: 100%; } 
+}
+
+.auth-card { 
+  background: var(--bg-secondary); 
+  border: 2px solid var(--accent-cyan); 
+  width: 90%; 
+  max-width: 410px; 
+  padding: 1.8rem; 
+  border-radius: 22px; 
+  box-shadow: 0 0 40px var(--accent-glow); 
+  text-align: center; 
+}
+
+.auth-card h2 { 
+  margin-bottom: 5px; 
+  font-size: 1.25rem; 
+}
+
+.auth-card p { 
+  font-size: 0.84rem; 
+  color: var(--text-muted); 
+  margin-bottom: 1.2rem; 
+}
+
+.auth-form { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.9rem; 
+  text-align: right; 
+}
+
+.input-field-group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 5px; 
+}
+
+.input-field-group label { 
+  font-size: 0.82rem; 
+  font-weight: 600; 
+  color: var(--text-main); 
+}
+
+.input-field-group input, 
+.input-field-group select,
+.task-textarea { 
+  background: var(--bg-primary); 
+  border: 1px solid var(--border-color); 
+  color: var(--text-main); 
+  padding: 9px 12px; 
+  border-radius: 10px; 
+  outline: none; 
+  transition: border-color 0.2s ease;
+}
+
+.input-field-group input:focus, 
+.input-field-group select:focus,
+.task-textarea:focus { 
+  border-color: var(--accent-cyan); 
+}
+
+.task-textarea {
+  resize: vertical;
+  min-height: 55px;
+  line-height: 1.4;
+}
+
+.btn-primary { 
+  background: var(--btn-primary-bg); 
+  color: var(--btn-primary-text); 
+  border: 1px solid var(--btn-primary-bg); 
+  padding: 10px; 
+  border-radius: 11px; 
+  font-weight: 700; 
+  cursor: pointer; 
+  font-size: 0.95rem; 
+}
+
+/* ==========================================
+   ۵. هدر اصلی برنامه
+   ========================================== */
+.main-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 0.75rem 1.8rem; 
+  background-color: var(--bg-secondary); 
+  border-bottom: 1px solid var(--border-color); 
+  flex-shrink: 0;
+}
+
+.brand-container { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+
+.brand-title { 
+  font-size: 1.25rem; 
+  font-weight: 800; 
+  line-height: 1.1; 
+}
+
+.brand-slogan { 
+  font-size: 0.74rem; 
+  color: var(--text-muted); 
+}
+
+.header-controls { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+
+.control-btn { 
+  background: var(--bg-card); 
+  color: var(--text-main); 
+  border: 1px solid var(--border-color); 
+  padding: 6px 12px; 
+  border-radius: 16px; 
+  cursor: pointer; 
+  font-size: 0.8rem; 
+  font-weight: 600; 
+}
+
+.user-badge { 
+  background: rgba(56, 189, 248, 0.15); 
+  color: var(--accent-cyan); 
+  padding: 5px 12px; 
+  border-radius: 16px; 
+  font-weight: 700; 
+  font-size: 0.82rem; 
+}
+
+.header-clock { 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-color); 
+  padding: 5px 12px; 
+  border-radius: 16px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-family: 'JetBrains Mono', monospace; 
+  font-size: 0.85rem; 
+  font-weight: 700; 
+  color: var(--accent-cyan); 
+}
+
+.header-cat-mini {
+  width: 38px;
+  height: 38px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--accent-cyan);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px var(--accent-glow);
+  cursor: pointer;
+}
+
+.catmodoro-mini-vector { 
+  width: 30px; 
+  height: 30px; 
+  overflow: visible; 
+}
+
+/* ==========================================
+   ۶. کانتینر اصلی داشبورد و میدان ۴ خانه
+   ========================================== */
+.app-container { 
+  flex: 1; 
+  max-width: 100%; 
+  width: 100%; 
+  margin: 0; 
+  padding: 0.8rem 1.2rem; 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  animation: fadeIn 0.4s ease; 
+}
+
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(8px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
+
+.hub-grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 1.6rem; 
+  margin: auto;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.hub-card { 
+  background: var(--bg-card); 
+  border: 1.5px solid var(--border-color); 
+  border-radius: 24px; 
+  padding: 2.3rem 2rem; 
+  min-height: 205px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center; 
+  cursor: pointer; 
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hub-card:hover { 
+  transform: translateY(-6px) scale(1.015); 
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35), 0 0 30px var(--accent-glow); 
+  border-color: var(--accent-cyan); 
+}
+
+.hub-card-icon { 
+  font-size: 3.4rem; 
+  margin-bottom: 0.8rem; 
+  display: inline-block;
+}
+
+.hub-card h3 { 
+  font-size: 1.45rem; 
+  font-weight: 800; 
+  margin-bottom: 6px; 
+}
+
+.hub-card p { 
+  color: var(--text-muted); 
+  font-size: 0.92rem; 
+}
+
+.house-page { 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-color); 
+  border-radius: 20px; 
+  padding: 1.2rem; 
+  min-height: 75vh; 
+  width: 100%;
+}
+
+.house-header { 
+  display: flex; 
+  align-items: center; 
+  gap: 15px; 
+  margin-bottom: 1.5rem; 
+  border-bottom: 1px solid var(--border-color); 
+  padding-bottom: 0.9rem; 
+}
+
+.back-to-hub-btn { 
+  background: var(--bg-secondary); 
+  border: 1px solid var(--border-color); 
+  color: var(--text-main); 
+  padding: 7px 14px; 
+  border-radius: 11px; 
+  font-weight: 600; 
+  cursor: pointer; 
+}
+
+/* ==========================================
+   ۷. خانه ۱: میز تمرکز و لیست تکالیف
+   ========================================== */
+.dashboard-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 1.3rem; 
+}
+
+.widget-card { 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-color); 
+  border-radius: 20px; 
+  padding: 1.5rem; 
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+}
+
+.widget-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 1.2rem; 
+}
+
+.widget-header h2 { 
+  font-size: 1.1rem; 
+  font-weight: 700; 
+}
+
+.cat-status { 
+  font-size: 0.78rem; 
+  background: rgba(234, 179, 8, 0.12); 
+  color: var(--accent-amber); 
+  border: 1px solid rgba(234, 179, 8, 0.3); 
+  padding: 4px 10px; 
+  border-radius: 11px; 
+  font-weight: 600; 
+}
+
+.timer-controls-selects { 
+  display: flex; 
+  justify-content: center; 
+  align-items: flex-end; 
+  gap: 10px; 
+  margin-bottom: 1rem; 
+  flex-wrap: wrap; 
+}
+
+.select-group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
+  text-align: right; 
+}
+
+.select-group label { 
+  font-size: 0.74rem; 
+  color: var(--text-muted); 
+  font-weight: 600; 
+}
+
+.task-select { 
+  background: var(--bg-secondary); 
+  border: 1px solid var(--border-color); 
+  color: var(--text-main); 
+  padding: 6px 10px; 
+  border-radius: 10px; 
+  outline: none; 
+  font-size: 0.8rem; 
+  cursor: pointer; 
+}
+
+.freeflow-btn { 
+  padding: 6px 12px; 
+  border-radius: 10px; 
+  font-size: 0.8rem; 
+}
+
+.freeflow-btn.active { 
+  background: var(--accent-cyan) !important; 
+  color: #0b1118 !important; 
+  border-color: var(--accent-cyan) !important; 
+  font-weight: 800 !important; 
+}
+
+.timer-display-wrapper { 
+  text-align: center; 
+  margin: 1.2rem 0; 
+  width: 100%; 
+}
+
+.timer-countdown {
+  direction: ltr;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-shadow: 0 0 25px var(--accent-glow);
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.colon { 
+  margin: 0 3px; 
+  animation: blink 1s step-start infinite; 
+  color: var(--text-muted); 
+}
+
+@keyframes blink { 
+  50% { opacity: 0; } 
+}
+
+.progress-bar-container { 
+  width: 100%; 
+  height: 7px; 
+  background: var(--bg-secondary); 
+  border-radius: 10px; 
+  overflow: hidden; 
+  margin-top: 1.2rem; 
+  border: 1px solid var(--border-color); 
+}
+
+.progress-bar-fill { 
+  width: 0%; 
+  height: 100%; 
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-amber)); 
+  transition: width 0.3s linear; 
+}
+
+.timer-actions { 
+  display: flex; 
+  gap: 8px; 
+  justify-content: center; 
+}
+
+.action-btn { 
+  padding: 9px 20px; 
+  border-radius: 11px; 
+  font-size: 0.9rem; 
+  font-weight: 700; 
+  cursor: pointer; 
+  border: 1px solid var(--border-color); 
+}
+
+.start-btn { 
+  background: var(--btn-primary-bg); 
+  color: var(--btn-primary-text); 
+  border-color: var(--btn-primary-bg);
+}
+
+.pause-btn, .reset-btn { 
+  background: var(--bg-secondary); 
+  color: var(--text-main); 
+}
+
+.task-counter { 
+  font-size: 0.78rem; 
+  color: var(--text-muted); 
+}
+
+/* ردیف اختصاصی انتخاب ساعت شفاف در میز تمرکز */
+.time-labeled-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-primary);
+  padding: 4px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.time-input-tag {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.task-time-pill {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+
+.add-task-btn { 
+  background: #f59e0b; 
+  color: #0d1117; 
+  border: 1px solid #f59e0b; 
+  padding: 8px 16px; 
+  border-radius: 10px; 
+  font-weight: 700; 
+  font-size: 0.84rem; 
+  cursor: pointer; 
+  white-space: nowrap; 
+}
+
+.tasks-list-container { 
+  max-height: 270px; 
+  overflow-y: auto; 
+  padding-left: 4px; 
+}
+
+.tasks-list { 
+  list-style: none; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 7px; 
+}
+
+.task-item { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  background: var(--bg-secondary); 
+  border: 1px solid var(--border-color); 
+  padding: 8px 12px; 
+  border-radius: 11px; 
+  transition: all 0.25s ease;
+}
+
+.task-item.completed { 
+  opacity: 0.6; 
+  filter: grayscale(70%); 
+}
+
+.task-item.completed .task-text { 
+  text-decoration: line-through; 
+  color: var(--text-muted); 
+}
+
+.task-right-side { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
+
+.task-text { 
+  font-size: 0.86rem; 
+  font-weight: 600; 
+  color: var(--text-main); 
+}
+
+.task-time-range-badge { 
+  font-family: 'JetBrains Mono', monospace; 
+  font-size: 0.7rem; 
+  background: rgba(245, 186, 66, 0.15); 
+  border: 1px solid var(--accent-amber); 
+  color: var(--accent-amber); 
+  padding: 2px 6px; 
+  border-radius: 6px; 
+}
+
+.task-has-notes-badge {
+  font-size: 0.72rem;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  padding: 1px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pin-task-btn, .status-toggle-pill { 
+  background: transparent; 
+  border: 1px solid var(--border-color); 
+  cursor: pointer; 
+  font-size: 0.78rem; 
+  padding: 3px 8px; 
+  border-radius: 8px; 
+  color: var(--text-main); 
+}
+
+/* رنگ‌های وضعیت کارت‌ها */
+.task-item.status-white { border-right: 4px solid #e6edf3; }
+.task-item.status-green { border-right: 4px solid #3fb950; background: rgba(63, 185, 80, 0.08); }
+.task-item.status-yellow{ border-right: 4px solid #eab308; background: rgba(234, 179, 8, 0.1); }
+.task-item.status-red   { border-right: 4px solid #f85149; background: rgba(248, 81, 73, 0.08); }
+.task-item.status-blue  { border-right: 4px solid #58a6ff; background: rgba(88, 166, 255, 0.08); }
+
+/* ==========================================
+   ۸. خانه ۲: مرکز فرماندهی و چیدمان برنامه
+   ========================================== */
+.weekly-full-card { 
+  padding: 0.5rem 0; 
+  width: 100%; 
+}
+
+.calendar-mode-switcher { 
+  display: inline-flex; 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-color); 
+  border-radius: 11px; 
+  padding: 3px; 
+  gap: 4px; 
+}
+
+.cal-switch-btn { 
+  background: transparent; 
+  border: 1px solid transparent; 
+  color: var(--text-muted); 
+  font-size: 0.78rem; 
+  font-weight: 700; 
+  padding: 5px 12px; 
+  border-radius: 8px; 
+  cursor: pointer; 
+}
+
+.cal-switch-btn.active { 
+  background: var(--accent-cyan); 
+  color: #0b0f17; 
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-glow); 
+}
+
+.termchin-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 14px;
+  flex-wrap: wrap;
+}
+
+.summary-chip {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.summary-chip strong {
+  color: var(--accent-cyan);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* سلکتور کشویی چندبرنامه‌ای (Multi-Plan Switcher) */
+.multi-plan-dropdown-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.plan-trigger-badge {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+.plan-layers-icon {
+  font-size: 1rem;
+}
+
+.plan-sub-count {
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.12);
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.dropdown-chevron {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.plan-menu-floating {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 20px var(--accent-glow);
+  min-width: 230px;
+  padding: 6px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeIn 0.2s ease;
+}
+
+.plan-menu-item {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.plan-menu-item:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--accent-cyan);
+}
+
+.plan-menu-item.active {
+  background: rgba(56, 189, 248, 0.18);
+  color: var(--accent-cyan);
+  font-weight: 800;
+}
+
+.plan-item-tag {
+  font-size: 0.68rem;
+  background: var(--accent-green);
+  color: white;
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+
+.plan-menu-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+.add-plan-action {
+  color: var(--accent-amber);
+  font-weight: 700;
+}
+
+/* جدول ماتریسی چیدمان برنامه کاملاً متغیر با تم */
+.termchin-schedule-container {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  overflow-x: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.termchin-grid-layout {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  width: 100%;
+  min-width: 1180px;
+  position: relative;
+}
+
+.termchin-days-column {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  z-index: 5;
+}
+
+.termchin-corner-cell {
+  height: 44px;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.termchin-day-header-cell {
+  height: 105px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
+}
+
+.termchin-day-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.termchin-day-count {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+  background: rgba(125, 125, 125, 0.1);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.termchin-timeline-area {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.termchin-hours-header {
+  height: 44px;
+  border-bottom: 2px solid var(--border-color);
+  display: grid;
+  grid-template-columns: repeat(18, 1fr);
+  background: var(--bg-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.termchin-hour-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-left: 1px solid var(--grid-line-color);
+}
+
+.termchin-day-row {
+  height: 105px;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+  background-image: repeating-linear-gradient(
+    to left,
+    transparent,
+    transparent calc((100% / 18) - 1px),
+    var(--grid-line-color) calc((100% / 18) - 1px),
+    var(--grid-line-color) calc(100% / 18)
+  );
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+.termchin-card {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  border-radius: 12px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  overflow: hidden;
+  z-index: 2;
+  direction: rtl;
+}
+
+.termchin-card:hover {
+  transform: translateY(-2px) scale(1.02);
+  z-index: 10;
+}
+
+.termchin-card-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  margin-bottom: 3px;
+}
+
+.termchin-card-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  direction: ltr;
+  opacity: 0.95;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.termchin-card.status-white {
+  background: rgba(230, 237, 243, 0.15);
+  border: 1.5px solid #cbd5e1;
+  color: var(--text-main);
+}
+
+.termchin-card.status-green {
+  background: rgba(63, 185, 80, 0.18);
+  border: 1.5px solid #3fb950;
+  color: #3fb950;
+}
+
+.termchin-card.status-yellow {
+  background: rgba(234, 179, 8, 0.2);
+  border: 1.5px solid #eab308;
+  color: #facc15;
+}
+
+.termchin-card.status-red {
+  background: rgba(248, 81, 73, 0.18);
+  border: 1.5px solid #f85149;
+  color: #ff7b72;
+}
+
+.termchin-card.status-blue {
+  background: rgba(88, 166, 255, 0.18);
+  border: 1.5px solid #58a6ff;
+  color: #58a6ff;
+}
+
+.termchin-drag-ghost {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  background: rgba(56, 189, 248, 0.2);
+  border: 2px dashed var(--accent-cyan);
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.termchin-drag-handle-pill {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-card);
+  border: 1.5px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.termchin-drag-ghost.has-conflict {
+  background: rgba(248, 81, 73, 0.25) !important;
+  border-color: var(--accent-red) !important;
+}
+
+.termchin-drag-ghost.has-conflict .termchin-drag-handle-pill {
+  border-color: var(--accent-red) !important;
+  color: var(--accent-red) !important;
+  box-shadow: 0 0 15px rgba(248, 81, 73, 0.4) !important;
+}
+
+.weekly-grid { 
+  display: grid; 
+  grid-template-columns: repeat(7, 1fr); 
+  gap: 8px; 
+}
+
+.day-column { 
+  background: var(--bg-secondary); 
+  border: 1px solid var(--border-color); 
+  border-radius: 13px; 
+  padding: 9px 7px; 
+  min-height: 240px; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+.day-head { 
+  text-align: center; 
+  font-weight: 700; 
+  font-size: 0.82rem; 
+  padding-bottom: 6px; 
+  margin-bottom: 6px; 
+  border-bottom: 1px solid var(--border-color); 
+}
+
+.day-tasks-dropzone { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 5px; 
+  flex: 1; 
+}
+
+.week-task-item { 
+  font-size: 0.74rem; 
+  padding: 7px; 
+  border-radius: 7px; 
+  font-weight: 600; 
+  line-height: 1.4; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  cursor: pointer; 
+}
+
+.week-task-item.status-white { background: rgba(230, 237, 243, 0.1); border: 1px solid #cbd5e1; color: var(--text-main); }
+.week-task-item.status-green { background: rgba(63, 185, 80, 0.15); border: 1px solid #3fb950; color: #3fb950; }
+.week-task-item.status-yellow{ background: rgba(234, 179, 8, 0.18); border: 1px solid #eab308; color: #facc15; }
+.week-task-item.status-red   { background: rgba(248, 81, 73, 0.15); border: 1px solid #f85149; color: #ff7b72; }
+.week-task-item.status-blue  { background: rgba(88, 166, 255, 0.15); border: 1px solid #58a6ff; color: #58a6ff; }
+
+/* ==========================================
+   ۹. پنل ساعت اصلاح‌شده و پاپ‌آپ AI
+   ========================================== */
+.student-time-picker-card {
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.25s ease;
+}
+
+.student-time-picker-card.has-conflict {
+  border-color: var(--accent-red) !important;
+  box-shadow: 0 0 16px rgba(248, 81, 73, 0.25);
+}
+
+.time-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.picker-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* رفع وارونگی کلمات فارسی در بج مدت زمان */
+.duration-badge {
+  font-family: 'Vazirmatn', 'JetBrains Mono', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan);
+  padding: 3px 10px;
+  border-radius: 12px;
+  direction: rtl;
+  unicode-bidi: embed;
+}
+
+.time-slots-dual-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.time-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.block-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.time-dropdowns-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 11px;
+  padding: 6px 8px;
+}
+
+.time-dropdowns-wrap:focus-within {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.time-sub-select {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+  direction: ltr;
+  text-align: center;
+}
+
+.time-sub-select option {
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+.time-sep {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--accent-cyan);
+  font-size: 1rem;
+}
+
+/* جهت درست فلش جریان زمانی */
+.time-flow-arrow {
+  color: var(--accent-cyan);
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-top: 18px;
+  user-select: none;
+}
+
+.time-presets-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.presets-hint {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* شبکه متقارن ۲×۲ پارت‌های متداول */
+.presets-grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.preset-pill-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* باکس هشدار تداخل زمانی اصلاح‌شده */
+.conflict-banner-box {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  line-height: 1.5;
+}
+
+.conflict-banner-box.no-conflict {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.4);
+  color: #3fb950;
+}
+
+.conflict-banner-box.has-conflict {
+  background: rgba(248, 81, 73, 0.15);
+  border: 1.5px solid #f85149;
+  color: #ff7b72;
+  box-shadow: 0 0 12px rgba(248, 81, 73, 0.3);
+}
+
+/* پاپ‌آپ برنامه پیشنهادی هوش مصنوعی */
+.ai-suggest-card {
+  max-width: 780px !important;
+  width: 95% !important;
+  max-height: 88vh;
+  overflow-y: auto;
+  text-align: right;
+  padding: 1.5rem !important;
+  box-shadow: 0 0 50px var(--accent-glow);
+}
+
+.ai-priority-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.ai-priority-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.ai-priority-header.tier-high {
+  background: rgba(248, 81, 73, 0.15);
+  border: 1px solid rgba(248, 81, 73, 0.35);
+  color: #ff7b72;
+}
+
+.ai-priority-header.tier-medium {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  color: #facc15;
+}
+
+.ai-priority-header.tier-low {
+  background: rgba(63, 185, 80, 0.15);
+  border: 1px solid rgba(63, 185, 80, 0.35);
+  color: #3fb950;
+}
+
+.ai-plan-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 10px 14px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ai-plan-item-row:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.04);
+}
+
+.ai-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-item-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.ai-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.ai-item-meta .badge {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 7px;
+  border-radius: 6px;
+  color: var(--accent-amber);
+}
+
+.ai-item-action-btn {
+  background: var(--accent-cyan);
+  color: #0b1118;
+  border: 1px solid var(--accent-cyan);
+  border-radius: 9px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ai-item-action-btn.added {
+  background: #238636 !important;
+  border-color: #238636 !important;
+  color: white !important;
+  cursor: default !important;
+}
+
+.ai-preview-slot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+/* ==========================================
+   ۱۰. خانه ۳: رکوردهای عمیق و نمودارها
+   ========================================== */
+.records-grid { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 12px; 
+  margin-bottom: 1rem; 
+}
+
+.record-box { 
+  background: var(--bg-secondary); 
+  border: 1px solid var(--border-color); 
+  padding: 1.2rem; 
+  border-radius: 15px; 
+  text-align: center; 
+}
+
+.record-icon { 
+  font-size: 1.8rem; 
+  margin-bottom: 8px; 
+  display: block; 
+}
+
+.record-val { 
+  font-size: 2rem; 
+  font-family: 'JetBrains Mono', sans-serif; 
+  font-weight: 800; 
+  color: var(--accent-cyan); 
+  margin-bottom: 4px; 
+}
+
+.record-title { 
+  font-size: 0.8rem; 
+  color: var(--text-muted); 
+  font-weight: 600; 
+}
+
+/* نمودار میله‌ای توزیع ساعات */
+.weekly-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 160px;
+  padding-top: 15px;
+  border-bottom: 2px solid var(--border-color);
+  margin-top: 10px;
+}
+
+.chart-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.chart-bar-fill {
+  width: 100%;
+  max-width: 32px;
+  background: linear-gradient(180deg, var(--accent-cyan), rgba(56, 189, 248, 0.3));
+  border-radius: 8px 8px 0 0;
+  transition: height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  min-height: 4px;
+}
+
+.chart-bar-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.chart-bar-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+}
+
+/* ==========================================
+   ۱۱. خانه ۴: کتابخانه منابع شخصی
+   ========================================== */
+.library-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+  gap: 1.1rem; 
+  align-items: start; 
+}
+
+.library-tier { 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-color); 
+  border-radius: 16px; 
+  padding: 1.1rem; 
+  display: flex; 
+  flex-direction: column; 
+  max-height: 380px; 
+}
+
+.tier-title { 
+  margin-bottom: 0.7rem; 
+  font-size: 0.92rem; 
+  border-bottom: 1px solid var(--border-color); 
+  padding-bottom: 7px; 
+  flex-shrink: 0; 
+}
+
+.library-list { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0; 
+  overflow-y: auto; 
+  max-height: 290px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 7px; 
+}
+
+/* ==========================================
+   ۱۲. انیمیشن‌ها و ویژگی‌های مسکات Catmodoro
+   ========================================== */
+.guide-container { 
+  background: var(--bg-secondary); 
+  border: 2px solid var(--accent-cyan); 
+  width: 90%; 
+  max-width: 560px; 
+  padding: 1.8rem; 
+  border-radius: 22px; 
+  box-shadow: 0 0 50px var(--accent-glow); 
+  direction: rtl; 
+  text-align: right; 
+}
+
+.mascot-actor-wrap { 
+  display: flex; 
+  align-items: center; 
+  gap: 14px; 
+  margin-bottom: 1.2rem; 
+  border-bottom: 1px solid var(--border-color); 
+  padding-bottom: 1rem; 
+}
+
+.catmodoro-mascot-box { 
+  width: 85px; 
+  height: 85px; 
+  background: var(--bg-card); 
+  border: 2px solid var(--accent-cyan); 
+  border-radius: 22px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  box-shadow: 0 0 25px var(--accent-glow); 
+  flex-shrink: 0; 
+}
+
+.catmodoro-vector { 
+  width: 74px; 
+  height: 74px; 
+}
+
+.cat-face, .cat-ear { 
+  fill: var(--bg-secondary); 
+  stroke: var(--accent-cyan); 
+  stroke-width: 2.5; 
+}
+
+.headphone-band { 
+  fill: none; 
+  stroke: var(--accent-amber); 
+  stroke-width: 3.5; 
+  animation: headphoneGlow 2.5s ease-in-out infinite alternate;
+}
+
+.headphone-cup { 
+  fill: var(--accent-cyan); 
+  animation: cupPulse 2.5s ease-in-out infinite alternate;
+}
+
+.cat-nose { 
+  fill: var(--accent-amber); 
+}
+
+.cat-mouth, .cat-whisker { 
+  stroke: var(--text-muted); 
+  stroke-width: 1.6; 
+  fill: none; 
+}
+
+.cat-eye { 
+  fill: var(--accent-cyan); 
+}
+
+.cat-eye-group {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: catBlinkDual 4.2s infinite ease-in-out;
+}
+
+@keyframes catBlinkDual {
+  0%, 82%, 88%, 94%, 100% { transform: scaleY(1); }
+  85% { transform: scaleY(0.08); }
+  91% { transform: scaleY(0.08); }
+}
+
+.cat-ear-left {
+  transform-box: fill-box;
+  transform-origin: bottom right;
+  animation: earTwitchLeft 5.5s infinite ease-in-out;
+}
+
+.cat-ear-right {
+  transform-box: fill-box;
+  transform-origin: bottom left;
+  animation: earTwitchRight 5.5s infinite ease-in-out;
+}
+
+@keyframes earTwitchLeft {
+  0%, 75%, 100% { transform: rotate(0deg); }
+  78% { transform: rotate(-8deg); }
+  81% { transform: rotate(0deg); }
+}
+
+@keyframes earTwitchRight {
+  0%, 82%, 100% { transform: rotate(0deg); }
+  85% { transform: rotate(8deg); }
+  88% { transform: rotate(0deg); }
+}
+
+.catmodoro-mascot-box, .header-cat-mini, .timer-cat-mascot {
+  animation: catFloat 3.8s ease-in-out infinite;
+}
+
+@keyframes catFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes headphoneGlow {
+  from { filter: drop-shadow(0 0 2px var(--accent-amber)); }
+  to { filter: drop-shadow(0 0 7px var(--accent-amber)); }
+}
+
+@keyframes cupPulse {
+  from { filter: drop-shadow(0 0 2px var(--accent-cyan)); }
+  to { filter: drop-shadow(0 0 8px var(--accent-cyan)); }
+}
+
+.cat-jump-anim {
+  animation: catHappyJump 0.45s ease-out !important;
+}
+
+@keyframes catHappyJump {
+  0% { transform: scale(1) translateY(0); }
+  40% { transform: scale(1.18) translateY(-8px) rotate(-5deg); }
+  70% { transform: scale(0.95) translateY(2px) rotate(3deg); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+.timer-cat-mascot {
+  width: 65px;
+  height: 65px;
+  background: var(--bg-card);
+  border: 2px solid var(--accent-cyan);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px var(--accent-glow);
+  cursor: pointer;
+}
+
+.catmodoro-timer-vector {
+  width: 52px;
+  height: 52px;
+  overflow: visible;
+}
+
+.guide-cards-grid { 
+  display: grid; 
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 10px; 
+}
+
+.guide-step-card { 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-color); 
+  padding: 11px; 
+  border-radius: 13px; 
+}
+
+.guide-icon { 
+  font-size: 1.3rem; 
+  display: block; 
+  margin-bottom: 3px; 
+}
+
+.guide-step-card h4 { 
+  font-size: 0.86rem; 
+  font-weight: 700; 
+  margin-bottom: 3px; 
+  color: var(--text-main); 
+}
+
+.guide-step-card p { 
+  font-size: 0.72rem; 
+  color: var(--text-muted); 
+  line-height: 1.4; 
+}
+
+/* ==========================================
+   ۱۳. انتخابگر زبان و جهت LTR
+   ========================================== */
+.lang-btn {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.lang-btn.active {
+  border-color: var(--accent-cyan) !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: var(--accent-cyan) !important;
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+html[lang="en"] body {
+  direction: ltr;
+  text-align: left;
+}
+
+html[lang="en"] .auth-form,
+html[lang="en"] .select-group,
+html[lang="en"] .guide-container,
+html[lang="en"] .ai-suggest-card {
+  direction: ltr;
+  text-align: left;
+}
+
+html[lang="en"] .task-item.status-white,
+html[lang="en"] .task-item.status-green,
+html[lang="en"] .task-item.status-yellow,
+html[lang="en"] .task-item.status-red,
+html[lang="en"] .task-item.status-blue {
+  border-right: 1px solid var(--border-color);
+  border-left: 4px solid currentColor;
+}
+
+/* ==========================================
+   ۱۴. فوتر سازنده و خروجی پرینت / PDF
+   ========================================== */
+.developer-showcase { 
+  margin-top: auto; 
+  padding: 0.75rem 1rem; 
+  border-top: 1px solid var(--border-color); 
+  direction: rtl; 
+  flex-shrink: 0;
+}
+
+.dev-card-inner { 
+  max-width: 950px; 
+  margin: 0 auto; 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-color); 
+  border-radius: 16px; 
+  padding: 0.65rem 1.4rem; 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  flex-wrap: wrap; 
+  gap: 0.8rem; 
+}
+
+.dev-avatar-wrap { 
+  width: 44px; 
+  height: 44px; 
+  border-radius: 12px; 
+  background: var(--bg-secondary); 
+  border: 1.5px solid var(--accent-cyan); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 1.3rem; 
+  flex-shrink: 0; 
+}
+
+.dev-info-text { 
+  flex: 1; 
+  min-width: 220px; 
+}
+
+.dev-name-row { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  flex-wrap: wrap; 
+}
+
+.dev-label { 
+  font-size: 0.72rem; 
+  color: var(--text-muted); 
+}
+
+.dev-name { 
+  font-size: 0.98rem; 
+  font-weight: 800; 
+  color: var(--accent-cyan); 
+  margin: 0; 
+}
+
+.dev-badge-core { 
+  font-size: 0.68rem; 
+  padding: 2px 7px; 
+  border-radius: 16px; 
+  background: rgba(245, 186, 66, 0.15); 
+  border: 1px solid var(--accent-amber); 
+  color: var(--accent-amber); 
+  font-family: 'JetBrains Mono', monospace; 
+  font-weight: 600; 
+}
+
+.dev-tagline { 
+  font-size: 0.74rem; 
+  color: var(--text-muted); 
+  margin-top: 2px; 
+}
+
+.dev-social-actions { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  flex-wrap: wrap; 
+}
+
+.dev-btn { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px; 
+  padding: 6px 12px; 
+  border-radius: 10px; 
+  font-size: 0.78rem; 
+  font-weight: 700; 
+  text-decoration: none; 
+  border: 1px solid var(--border-color); 
+  background: var(--bg-secondary); 
+  color: var(--text-main); 
+}
+
+.star-badge { 
+  background: var(--accent-amber); 
+  color: #0b0f17; 
+  padding: 1px 5px; 
+  border-radius: 5px; 
+  font-size: 0.68rem; 
+  font-weight: 800; 
+}
+
+/* خروجی تمیز اختصاصی پرینت و PDF افقی (A4 Landscape) */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .main-header, .main-footer, .hub-grid, .calendar-mode-switcher, .control-btn, .btn-primary, .back-to-hub-btn, #add-weekly-modal, #task-detail-modal, #ai-suggest-modal {
+    display: none !important;
+  }
+  .app-container, .house-page, .widget-card {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+  .termchin-schedule-container {
+    border: 1px solid #94a3b8 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ==========================================
+   ۱۵. مدیا کوئری‌ها (واکنش‌گرایی)
+   ========================================== */
+@media (max-width: 1000px) { 
+  .dashboard-grid { grid-template-columns: 1fr; } 
+  .records-grid { grid-template-columns: repeat(2, 1fr); }
+  .analytics-deep-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 800px) { 
+  .weekly-grid { grid-template-columns: repeat(4, 1fr); } 
+}
+
+@media (max-width: 768px) { 
+  .hub-grid { grid-template-columns: 1fr; gap: 1rem; } 
+  .main-header { flex-direction: column; gap: 10px; } 
+  .dev-card-inner { flex-direction: column; text-align: center; }
+  .presets-grid-wrapper { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) { 
+  .timer-countdown { font-size: 3.5rem; } 
+  .weekly-grid { grid-template-columns: 1fr 1fr; } 
+  .records-grid { grid-template-columns: 1fr; } 
+}
+
+/* ==========================================================================
+   طراحی مدرن نئونی فرم ثبت تکالیف میز تمرکز (Focus Desk Task Bar)
+   ========================================================================== */
+
+.task-input-form-neon {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-secondary) !important;
+  border: 1.5px solid var(--border-color);
+  padding: 14px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  margin-bottom: 1rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.task-input-form-neon:focus-within {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.task-input-main-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.task-title-input-wrap {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.2s ease;
+}
+
+.task-title-input-wrap:focus-within {
+  border-color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.04) !important;
+}
+
+.input-glow-icon {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+/* رفع کامل سفیدی پس‌زمینه کادر عنوان */
+#task-input {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: var(--text-main) !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0;
+}
+
+#task-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* سلکتور وضعیت رنگی سطر اول */
+.task-status-pill-select {
+  background: var(--bg-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  padding: 9px 12px;
+  border-radius: 12px;
+  outline: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 135px;
+  transition: all 0.2s ease;
+}
+
+.task-status-pill-select:hover,
+.task-status-pill-select:focus {
+  border-color: var(--accent-cyan) !important;
+}
+
+.task-input-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.06);
+}
+
+.task-times-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* کپسول‌های انتخاب زمان */
+.time-chip-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.time-chip-box:focus-within {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.time-chip-icon {
+  font-size: 0.85rem;
+}
+
+.time-chip-label {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* اصلاح نمایش زمان و آیکون در مرورگر با color-scheme */
+.time-chip-input {
+  background: transparent !important;
+  border: none !important;
+  color: var(--accent-amber) !important;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.86rem;
+  font-weight: 800;
+  outline: none;
+  cursor: pointer;
+  direction: ltr;
+}
+
+/* هماهنگ‌سازی آیکون ساعت مرورگر با تم‌های تیره و روشن */
+[data-theme="neon"] .time-chip-input,
+[data-theme="dark"] .time-chip-input {
+  color-scheme: dark;
+}
+
+[data-theme="light"] .time-chip-input {
+  color-scheme: light;
+}
+
+.time-flow-sep {
+  color: var(--accent-cyan);
+  font-weight: 800;
+  font-size: 1.1rem;
+  user-select: none;
+}
+
+/* دکمه ثبت نئونی جذاب */
+.submit-task-neon-btn {
+  background: linear-gradient(135deg, var(--accent-cyan), #0284c7) !important;
+  color: #0b1118 !important;
+  border: none !important;
+  padding: 8px 18px;
+  border-radius: 11px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 14px var(--accent-glow);
+  white-space: nowrap;
+}
+
+.submit-task-neon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px var(--accent-glow), 0 0 8px var(--accent-cyan) !important;
+}
+
+.btn-paw {
+  font-size: 0.95rem;
+}
+
+/* مهار ارتفاع مودال‌ها و جلوگیری از بریدگی بالا و پایین */
+.fullscreen-overlay {
+  overflow-y: auto !important;
+  padding: 20px 10px !important;
+}
+
+#add-weekly-modal .auth-card,
+#task-detail-modal .auth-card,
+#edit-profile-modal .auth-card {
+  max-height: 88vh !important;
+  overflow-y: auto !important;
+  margin: auto !important;
+  padding: 1.2rem 1.4rem !important;
+}
+
+/* فشرده‌سازی هوشمند فاصله‌ها برای جا شدن کامل در یک نگاه */
+#add-weekly-modal .input-field-group {
+  gap: 3px !important;
+}
+
+#add-weekly-modal .student-time-picker-card {
+  padding: 10px 12px !important;
+  gap: 8px !important;
+}
+
+#add-weekly-modal .task-textarea {
+  min-height: 48px !important;
+  padding: 6px 10px !important;
+}
+
+.ai-item-del-btn {
+  background: rgba(248, 81, 73, 0.1) !important;
+  border: 1px solid rgba(248, 81, 73, 0.35) !important;
+  color: var(--accent-red) !important;
+  padding: 6px 10px !important;
+  border-radius: 9px !important;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-item-del-btn:hover {
+  background: var(--accent-red) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-red) !important;
+  box-shadow: 0 0 10px rgba(248, 81, 73, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   بهبود کنتراست و خوانایی تسک‌ها در تم روشن (Light Theme Readability)
+   ========================================================================== */
+
+/* ۱. تسک‌های لیست امروز (میز تمرکز) */
+[data-theme="light"] .task-item {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .task-item .task-text {
+  color: #0f172a !important;
+  font-weight: 700;
+}
+
+[data-theme="light"] .task-item.status-white  { border-right: 5px solid #64748b !important; background: #f8fafc !important; }
+[data-theme="light"] .task-item.status-green  { border-right: 5px solid #16a34a !important; background: #f0fdf4 !important; }
+[data-theme="light"] .task-item.status-yellow { border-right: 5px solid #d97706 !important; background: #fefce8 !important; }
+[data-theme="light"] .task-item.status-red    { border-right: 5px solid #dc2626 !important; background: #fef2f2 !important; }
+[data-theme="light"] .task-item.status-blue   { border-right: 5px solid #2563eb !important; background: #eff6ff !important; }
+
+[data-theme="light"] .task-time-range-badge {
+  background: #fef3c7 !important;
+  border: 1px solid #d97706 !important;
+  color: #92400e !important;
+  font-weight: 700;
+}
+
+[data-theme="light"] .task-has-notes-badge {
+  background: #e0f2fe !important;
+  border: 1px solid #0284c7 !important;
+  color: #0369a1 !important;
+}
+
+/* ۲. کارت‌های خط زمانی ماتریسی (مرکز فرماندهی) */
+[data-theme="light"] .termchin-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .termchin-card-title {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="light"] .termchin-card-time {
+  background: rgba(15, 23, 42, 0.08) !important;
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="light"] .termchin-card.status-white  { background: #f1f5f9 !important; border: 1.5px solid #94a3b8 !important; }
+[data-theme="light"] .termchin-card.status-green  { background: #dcfce7 !important; border: 1.5px solid #16a34a !important; }
+[data-theme="light"] .termchin-card.status-yellow { background: #fef9c3 !important; border: 1.5px solid #ca8a04 !important; }
+[data-theme="light"] .termchin-card.status-red    { background: #fee2e2 !important; border: 1.5px solid #dc2626 !important; }
+[data-theme="light"] .termchin-card.status-blue   { background: #dbeafe !important; border: 1.5px solid #2563eb !important; }
+
+/* ۳. کارت‌های چک‌لیست روزانه (کانبان) */
+[data-theme="light"] .day-column {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .day-head {
+  color: #0f172a !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .week-task-item {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .week-task-item.status-white  { background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; }
+[data-theme="light"] .week-task-item.status-green  { background: #dcfce7 !important; border: 1px solid #16a34a !important; color: #14532d !important; }
+[data-theme="light"] .week-task-item.status-yellow { background: #fef9c3 !important; border: 1px solid #ca8a04 !important; color: #713f12 !important; }
+[data-theme="light"] .week-task-item.status-red    { background: #fee2e2 !important; border: 1px solid #dc2626 !important; color: #7f1d1d !important; }
+[data-theme="light"] .week-task-item.status-blue   { background: #dbeafe !important; border: 1px solid #2563eb !important; color: #1e3a8a !important; }
+
+/* ۴. ردیف‌های برنامه پیشنهادی AI */
+[data-theme="light"] .ai-plan-item-row {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .ai-item-title {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .ai-item-meta {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .ai-item-meta .badge {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  font-weight: 700;
+}
+
+html[lang="en"] #task-detail-modal .auth-card {
+  text-align: left !important;
+  direction: ltr !important;
+}
+
+html[lang="en"] #task-detail-modal .task-select,
+html[lang="en"] #task-detail-modal .task-textarea {
+  text-align: left !important;
+  direction: ltr !important;
+}
