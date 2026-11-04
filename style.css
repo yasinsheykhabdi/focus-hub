@@ -1274,7 +1274,8 @@ button:active,
 }
 
 .time-dropdowns-wrap {
-  display: flex;
+  display: flex !important;
+  direction: ltr !important;
   align-items: center;
   justify-content: center;
   gap: 6px;
@@ -1573,9 +1574,11 @@ button:active,
 }
 
 .chart-bar-label {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
 }
 
 .chart-bar-value {
@@ -2363,4 +2366,74 @@ html[lang="en"] #task-detail-modal .task-select,
 html[lang="en"] #task-detail-modal .task-textarea {
   text-align: left !important;
   direction: ltr !important;
+}
+
+/* استایل دکمه حذف سناریو در منوی چندبرنامه‌ای */
+.plan-del-btn {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 2px 5px !important;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.plan-del-btn:hover {
+  color: var(--accent-red) !important;
+  border-color: rgba(248, 81, 73, 0.4) !important;
+  background: rgba(248, 81, 73, 0.15) !important;
+  box-shadow: 0 0 8px rgba(248, 81, 73, 0.3) !important;
+  transform: scale(1.1) !important;
+}
+
+.plan-title-text {
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   وضعیت‌های زنده و شخصی‌سازی‌شده دکمه‌های تایمر
+   ========================================================================== */
+
+/* ۱. دکمه استارت حین شمارش زمان */
+.action-btn.timer-running-active {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.45) !important;
+  opacity: 1 !important;
+  cursor: default !important;
+  animation: pulseRunning 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseRunning {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 14px rgba(16, 185, 129, 0.35); }
+  50% { transform: scale(1.02); box-shadow: 0 0 24px rgba(16, 185, 129, 0.65); }
+}
+
+/* ۲. دکمه مکث وقتی زمان متوقف شده */
+.action-btn.timer-paused-active {
+  background: rgba(245, 158, 11, 0.22) !important;
+  color: var(--accent-amber) !important;
+  border: 1.5px solid var(--accent-amber) !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4) !important;
+  opacity: 1 !important;
+  font-weight: 800 !important;
+}
+
+/* ۳. انیمیشن فوری برای فیدبک کلیک روی ریست */
+.action-btn.timer-reset-flash {
+  background: var(--accent-red) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-red) !important;
+  box-shadow: 0 0 20px rgba(248, 81, 73, 0.6) !important;
+  transform: scale(0.95);
 }

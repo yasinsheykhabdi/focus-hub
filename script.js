@@ -386,11 +386,10 @@ function applyAppLanguage(lang) {
   if (aiFormTitle) aiFormTitle.textContent = isFa ? '➕ افزودن درس جدید به پکیج پیشنهادی:' : '➕ Add new course to proposed plan:';
 
   const aiInputLabels = document.querySelectorAll('#ai-quick-add-row-form .input-field-group label');
-  if (aiInputLabels.length >= 4) {
+  if (aiInputLabels.length >= 3) {
     aiInputLabels[0].textContent = isFa ? 'نام درس یا مبحث:' : 'Course or Topic:';
     aiInputLabels[1].textContent = isFa ? 'سطح اولویت:' : 'Priority Tier:';
     aiInputLabels[2].textContent = isFa ? 'روز هفته:' : 'Day of Week:';
-    aiInputLabels[3].textContent = isFa ? 'مدت زمان:' : 'Duration:';
   }
 
   const aiTitleInput = document.getElementById('ai-input-title');
@@ -398,9 +397,9 @@ function applyAppLanguage(lang) {
 
   const aiTierSel = document.getElementById('ai-input-tier');
   if (aiTierSel && aiTierSel.options.length >= 3) {
-    aiTierSel.options[0].text = isFa ? '🔥 سطح ۱: حیاتی (عمیق)' : '🔥 Tier 1: Critical (Deep)';
-    aiTierSel.options[1].text = isFa ? '⚡ سطح ۲: عادی (روتین)' : '⚡ Tier 2: Routine (Standard)';
-    aiTierSel.options[2].text = isFa ? '🌱 سطح ۳: مرور (سبک)' : '🌱 Tier 3: Review (Light)';
+    aiTierSel.options[0].text = isFa ? '🔥 سطح ۱: حیاتی (عمیق - ۲ ساعته)' : '🔥 Tier 1: Critical (Deep - 2h)';
+    aiTierSel.options[1].text = isFa ? '⚡ سطح ۲: عادی (روتین - ۱.۵ ساعته)' : '⚡ Tier 2: Routine (1.5h)';
+    aiTierSel.options[2].text = isFa ? '🌱 سطح ۳: مرور (سبک - ۴۵ دقیقه)' : '🌱 Tier 3: Review (45m)';
   }
 
   const aiDaySel = document.getElementById('ai-input-day');
@@ -967,7 +966,42 @@ if (studySelect) {
     isStopwatchMode = false;
     if (freeflowBtn) freeflowBtn.classList.remove('active');
     currentPhase = 'study';
-    totalTime = parseInt(studySelect.value, 10);
+
+    if (studySelect.value === 'custom') {
+      const promptMsg = currentLang === 'fa' 
+        ? 'مدت زمان مطالعه دلخواه را به دقیقه وارد کنید (مثلاً ۳۵):' 
+        : 'Enter custom study time in minutes (e.g. 35):';
+      const input = prompt(promptMsg, '30');
+
+      if (input === null) {
+        // در صورت انصراف کاربر، بر روی مقدار قبلی می‌ماند
+        studySelect.value = totalTime;
+        return;
+      }
+
+      const mins = parseInt(input, 10);
+      if (!isNaN(mins) && mins >= 1 && mins <= 240) {
+        totalTime = mins * 60;
+
+        // ایجاد یا به‌روزرسانی گزینه موقت در منوی کشویی
+        let opt = studySelect.querySelector('option[data-custom="true"]');
+        if (!opt) {
+          opt = document.createElement('option');
+          opt.setAttribute('data-custom', 'true');
+          studySelect.insertBefore(opt, studySelect.lastElementChild);
+        }
+        opt.value = totalTime;
+        opt.textContent = currentLang === 'fa' ? `✏️ ${mins} دقیقه (دلخواه)` : `✏️ ${mins} mins (Custom)`;
+        opt.selected = true;
+      } else {
+        alert(currentLang === 'fa' ? 'لطفاً عددی معتبر بین ۱ تا ۲۴۰ دقیقه وارد کنید!' : 'Please enter a valid number between 1 and 240 minutes!');
+        studySelect.value = totalTime;
+        return;
+      }
+    } else {
+      totalTime = parseInt(studySelect.value, 10);
+    }
+
     timeLeft = totalTime;
     updateTimerDisplay();
     if (progressBar) progressBar.style.width = '0%';
@@ -1009,8 +1043,17 @@ if (resetBtn) resetBtn.addEventListener('click', resetTimer);
 function startTimer() {
   if (isRunning) return;
   isRunning = true;
+  
+  // شخصی‌سازی دکمه استارت حین تمرکز
   startBtn.disabled = true;
+  startBtn.classList.add('timer-running-active');
+  startBtn.innerHTML = '<span>در حال تمرکز... ⏳</span>';
+  
+  // آماده‌سازی دکمه مکث
   pauseBtn.disabled = false;
+  pauseBtn.classList.remove('timer-paused-active');
+  pauseBtn.innerHTML = '<span>مکث ⏸️</span>';
+  
   lockTimerUI(true);
 
   if (isStopwatchMode) {
@@ -1040,8 +1083,17 @@ function pauseTimer() {
   if (!isRunning) return;
   clearInterval(timerInterval);
   isRunning = false;
+  
+  // دکمه استارت آماده برای «ادامه پارت»
   startBtn.disabled = false;
+  startBtn.classList.remove('timer-running-active');
+  startBtn.innerHTML = '<span>ادامه تمرکز ▶️</span>';
+  
+  // متمایز شدن دکمه مکث (نشان‌دهنده وضعیت متوقف‌شده)
   pauseBtn.disabled = true;
+  pauseBtn.classList.add('timer-paused-active');
+  pauseBtn.innerHTML = '<span>توقف موقت ⏸️</span>';
+  
   lockTimerUI(false);
   updateCatStatus(currentLang === 'fa' ? 'تایمر متوقف شد ⏸️' : 'Timer Paused ⏸️');
 }
@@ -1049,8 +1101,21 @@ function pauseTimer() {
 function resetTimer() {
   clearInterval(timerInterval);
   isRunning = false;
+  
+  // بازگرداندن دکمه استارت به حالت اولیه
   startBtn.disabled = false;
+  startBtn.classList.remove('timer-running-active');
+  startBtn.innerHTML = currentLang === 'fa' ? '<span>شروع تمرکز</span>' : '<span>Start Focus</span>';
+  
+  // بازگرداندن دکمه مکث به حالت اولیه
   pauseBtn.disabled = true;
+  pauseBtn.classList.remove('timer-paused-active');
+  pauseBtn.innerHTML = currentLang === 'fa' ? '<span>مکث</span>' : '<span>Pause</span>';
+  
+  // افکت چشمک‌زن ریست روی خود دکمه ریست
+  resetBtn.classList.add('timer-reset-flash');
+  setTimeout(() => resetBtn.classList.remove('timer-reset-flash'), 400);
+
   lockTimerUI(false);
 
   if (isStopwatchMode) {
@@ -1568,12 +1633,18 @@ function initMultiPlanSelector() {
     let planTasksCount = 0;
     for (let d in plan.tasks) planTasksCount += (plan.tasks[d] || []).length;
 
+    // دکمه حذف فقط برای سناریوهایی غیر از برنامه اصلی نمایش داده می‌شود
+    const deleteBtnHtml = (planId !== 'main') 
+      ? `<button type="button" class="plan-del-btn" data-del-plan-id="${planId}" title="${currentLang === 'fa' ? 'حذف این سناریو' : 'Delete Scenario'}">🗑️</button>` 
+      : '';
+
     itemsHtml += `
       <div class="plan-menu-item ${isActive ? 'active' : ''}" data-plan-id="${planId}">
-        <span>📑 ${plan.name}</span>
+        <span class="plan-title-text">📑 ${plan.name}</span>
         <div style="display: flex; align-items: center; gap: 6px;">
           <span class="plan-sub-count">${planTasksCount} ${i18nDOM[currentLang].tasksWord}</span>
           ${isActive ? '<span class="plan-item-tag">فعال</span>' : ''}
+          ${deleteBtnHtml}
         </div>
       </div>
     `;
@@ -1588,8 +1659,12 @@ function initMultiPlanSelector() {
 
   menu.innerHTML = itemsHtml;
 
+  // انتخاب و سوئیچ بین سناریوها
   menu.querySelectorAll('.plan-menu-item:not(.add-plan-action)').forEach(item => {
     item.addEventListener('click', (e) => {
+      // اگر روی دکمه حذف کلیک شد، سوئیچ انجام نشود
+      if (e.target.closest('.plan-del-btn')) return;
+
       e.stopPropagation();
       const planId = item.getAttribute('data-plan-id');
       if (multiPlanState.plans[planId]) {
@@ -1607,6 +1682,39 @@ function initMultiPlanSelector() {
     });
   });
 
+  // رویداد حذف سناریو با دکمه سطل زباله
+  menu.querySelectorAll('.plan-del-btn').forEach(delBtn => {
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const planId = delBtn.getAttribute('data-del-plan-id');
+      const targetPlan = multiPlanState.plans[planId];
+      if (!targetPlan) return;
+
+      const confirmMsg = currentLang === 'fa'
+        ? `آیا از حذف سناریوی «${targetPlan.name}» مطمئن هستید؟ تمام دروس این سناریو پاک خواهند شد.`
+        : `Are you sure you want to delete scenario "${targetPlan.name}"?`;
+
+      if (confirm(confirmMsg)) {
+        const wasActive = (planId === multiPlanState.activePlanId);
+        delete multiPlanState.plans[planId];
+
+        // اگر سناریوی در حال نمایش حذف شد، خودکار به برنامه اصلی برمی‌گردد
+        if (wasActive) {
+          multiPlanState.activePlanId = 'main';
+        }
+
+        try { localStorage.setItem('focus_hub_multi_plans_v1', JSON.stringify(multiPlanState)); } catch (err) {}
+        initMultiPlanSelector();
+        syncTodayTasks();
+        if (currentWeeklyMode === 'timeline') renderTermchinMatrix();
+        else if (currentWeeklyMode === 'kanban') renderWeeklyBoard();
+        renderAnalyticsDashboard();
+        updateCatStatus(currentLang === 'fa' ? `سناریوی «${targetPlan.name}» با موفقیت حذف شد! 🗑️🐾` : `Scenario "${targetPlan.name}" deleted! 🗑️🐾`);
+      }
+    });
+  });
+
+  // ساخت سناریوی جدید
   const createBtn = document.getElementById('create-new-plan-btn');
   if (createBtn) {
     createBtn.addEventListener('click', (e) => {
@@ -2360,6 +2468,84 @@ if (closeAiSuggestFooterBtn && aiSuggestModal) {
   closeAiSuggestFooterBtn.addEventListener('click', () => aiSuggestModal.classList.add('hidden'));
 }
 
+// الگوریتم تعیین هوشمند مدت‌زمان و بازه زمانی بدون تداخل
+function calculateSmartAiSlot(day, tier) {
+  let dur = 1.5;
+  let preferredStart = 9.0;
+
+  // تنظیم مدت‌زمان متناسب با اولویت درخواستی شما
+  if (tier === 'high') {
+    dur = 2.0;          // ۲ ساعت برای دروس حیاتی و حساس
+    preferredStart = 8.5; // ساعات طلایی اوج تمرکز صبح
+  } else if (tier === 'medium') {
+    dur = 1.5;          // ۱.۵ ساعت استاندارد
+    preferredStart = 13.5; // بازه بعدازظهر / اوایل عصر
+  } else if (tier === 'low') {
+    dur = 0.75;         // ۴۵ دقیقه برای مرور سبک
+    preferredStart = 19.0; // ساعات آرام شب
+  }
+
+  // جمع‌آوری تمام بازه‌های اشغال‌شده در جدول هفتگی و پیش‌نویس‌های AI برای این روز
+  const activeTasks = getActivePlanTasks();
+  const mainTasks = activeTasks[day] || [];
+  const draftTasks = aiProposedPlan.filter(it => it.day === day);
+
+  const occupied = [];
+  [...mainTasks, ...draftTasks].forEach(t => {
+    const s = t.start !== undefined ? t.start : t.hour;
+    const e = t.end !== undefined ? t.end : (s ? s + 1.5 : null);
+    if (s !== null && e !== null) {
+      occupied.push({ start: s, end: e });
+    }
+  });
+
+  // تابع بررسی تداخل زمانی
+  function hasConflict(start, end) {
+    return occupied.some(slot => start < slot.end && end > slot.start);
+  }
+
+  let chosenStart = null;
+
+  // ۱. بررسی ساعت ایده‌آل متناسب با اولویت درس
+  for (let candidate = preferredStart; candidate + dur <= 23.5; candidate += 0.5) {
+    if (!hasConflict(candidate, candidate + dur)) {
+      chosenStart = candidate;
+      break;
+    }
+  }
+
+  // ۲. اگر ساعت ایده‌آل پر بود، جستجو از ساعت ۰۸:۰۰ صبح تا شب برای اولین جای خالی
+  if (chosenStart === null) {
+    for (let candidate = 8.0; candidate + dur <= 23.5; candidate += 0.5) {
+      if (!hasConflict(candidate, candidate + dur)) {
+        chosenStart = candidate;
+        break;
+      }
+    }
+  }
+
+  // ۳. در شرایطی که روز خیلی شلوغ باشد، بعد از آخرین تسک قرار می‌گیرد
+  if (chosenStart === null) {
+    const maxEnd = occupied.length > 0 ? Math.max(...occupied.map(o => o.end)) : 8.0;
+    chosenStart = Math.min(23.5 - dur, Math.max(8.0, maxEnd + 0.5));
+  }
+
+  const chosenEnd = Math.min(24.0, chosenStart + dur);
+
+  // تولید برچسب زمانی هوشمند
+  const isFa = (currentLang === 'fa');
+  let label = '';
+  if (chosenStart < 12.0) {
+    label = isFa ? (tier === 'high' ? 'صبح (حیاتی)' : 'صبح (فوری)') : 'Morning';
+  } else if (chosenStart < 17.5) {
+    label = isFa ? (tier === 'high' ? 'عصر (اوج تمرکز)' : 'عصر (روتین)') : 'Afternoon';
+  } else {
+    label = isFa ? (tier === 'low' ? 'شب (مرور آرام)' : 'شب (آرام)') : 'Evening';
+  }
+
+  return { start: chosenStart, end: chosenEnd, priorityLabel: label };
+}
+
 if (aiQuickAddRowForm) {
   aiQuickAddRowForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -2367,33 +2553,32 @@ if (aiQuickAddRowForm) {
     const title = titleInput ? titleInput.value.trim() : '';
     const tier = document.getElementById('ai-input-tier').value;
     const day = document.getElementById('ai-input-day').value;
-    const dur = parseFloat(document.getElementById('ai-input-duration').value);
 
-    const sameDayItems = aiProposedPlan.filter(it => it.day === day);
-    let startH = 9.0;
-    if (sameDayItems.length > 0) {
-      const maxEnd = Math.max(...sameDayItems.map(it => it.end));
-      startH = maxEnd + 0.5;
-      if (startH + dur > 23.5) startH = 8.0;
-    }
+    if (!title) return;
 
-    let pLabel = startH < 12 ? (currentLang === 'fa' ? 'صبح (فوری)' : 'Morning') : (startH < 18 ? (currentLang === 'fa' ? 'عصر (اوج)' : 'Afternoon') : (currentLang === 'fa' ? 'شب (آرام)' : 'Evening'));
+    // تعیین خودکار ساعت و مدت توسط الگوریتم هوشمند
+    const slot = calculateSmartAiSlot(day, tier);
 
     aiProposedPlan.push({
       id: Date.now() + Math.random(),
-      title,
-      day,
-      start: startH,
-      end: Math.min(24, startH + dur),
-      tier,
-      priorityLabel: pLabel,
+      title: title,
+      day: day,
+      start: slot.start,
+      end: slot.end,
+      tier: tier,
+      priorityLabel: slot.priorityLabel,
       added: false
     });
 
     try { localStorage.setItem('focus_hub_ai_proposed_v2', JSON.stringify(aiProposedPlan)); } catch (err) {}
     renderAiSuggestedPlan();
     if (titleInput) titleInput.value = '';
-    updateCatStatus(currentLang === 'fa' ? `درس «${title}» به لیست پیشنهادی افزوده شد! 🐾` : `Added "${title}" to draft! 🐾`);
+    
+    updateCatStatus(
+      currentLang === 'fa' 
+        ? `درس «${title}» با بازه هوشمند ${decimalToTimeString(slot.start)} تا ${decimalToTimeString(slot.end)} چیده شد! 🧠🐾` 
+        : `"${title}" scheduled at ${decimalToTimeString(slot.start)} - ${decimalToTimeString(slot.end)}! 🧠🐾`
+    );
   });
 }
 
@@ -2569,7 +2754,7 @@ async function renderAnalyticsDashboard() {
       col.innerHTML = `
         <span class="chart-bar-value">${h}h</span>
         <div class="chart-bar-fill" style="height: ${heightPercent}%;"></div>
-        <span class="chart-bar-label">${d.name.substring(0, 3)}</span>
+        <span class="chart-bar-label">${d.name}</span>
       `;
       chartContainer.appendChild(col);
     });
@@ -2715,12 +2900,27 @@ function renderLibrary() {
     const listEl = document.getElementById(`lib-${cat}-list`);
     if (!listEl) return;
     listEl.innerHTML = '';
-    const items = userLibrary[cat] || [];
+
+    // لیست پیشنهادات همیشه مستقیم و بدون تغییر از دیتای مرجع خوانده می‌شود
+    const items = (cat === 'suggested') ? defaultLibraryData.suggested : (userLibrary[cat] || []);
+
     items.forEach(item => {
       const li = document.createElement('li');
       li.className = 'library-item';
       li.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg-secondary);border-radius:10px;border:1px solid var(--border-color);margin-bottom:6px;';
-      li.innerHTML = `<a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color:var(--text-main);text-decoration:none;font-size:0.85rem;">🔗 ${item.title}</a><button type="button" class="del-lib-btn" data-cat="${cat}" data-id="${item.id}" style="background:none;border:none;color:var(--accent-red);cursor:pointer;">✕</button>`;
+
+      // دکمه حذف فقط برای ۳ ستون شخصی کاربر (جزوه، دوره، سایت) ساخته می‌شود و در لیست پیشنهادات حذف است
+      const delBtnHtml = (cat !== 'suggested') 
+        ? `<button type="button" class="del-lib-btn" data-cat="${cat}" data-id="${item.id}" style="background:none;border:none;color:var(--accent-red);cursor:pointer;">✕</button>` 
+        : '';
+
+      li.innerHTML = `
+        <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="color:var(--text-main);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:6px;width:100%;">
+          <span>🔗</span>
+          <span>${item.title}</span>
+        </a>
+        ${delBtnHtml}
+      `;
       listEl.appendChild(li);
     });
   });

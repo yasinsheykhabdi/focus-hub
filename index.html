@@ -150,7 +150,7 @@
             <!-- ساعت شروع -->
             <div class="time-block">
               <span class="block-title">🚀 شروع کلاس:</span>
-              <div class="time-dropdowns-wrap">
+              <div class="time-dropdowns-wrap" dir="ltr" style="direction: ltr !important;">
                 <select id="weekly-start-h" class="time-sub-select" title="ساعت شروع"></select>
                 <span class="time-sep">:</span>
                 <select id="weekly-start-m" class="time-sub-select" title="دقیقه شروع">
@@ -168,7 +168,7 @@
             <!-- ساعت پایان -->
             <div class="time-block">
               <span class="block-title">🏁 پایان کلاس:</span>
-              <div class="time-dropdowns-wrap">
+              <div class="time-dropdowns-wrap" dir="ltr" style="direction: ltr !important;">
                 <select id="weekly-end-h" class="time-sub-select" title="ساعت پایان"></select>
                 <span class="time-sep">:</span>
                 <select id="weekly-end-m" class="time-sub-select" title="دقیقه پایان">
@@ -310,10 +310,10 @@
         <button type="button" id="close-ai-suggest-btn" style="background: none; border: none; color: var(--text-muted); font-size: 1.3rem; cursor: pointer;">✕</button>
       </div>
 
-      <!-- ردیف ورود سریع سطر جدید توسط دانشجو -->
+      <!-- ردیف ورود سریع سطر جدید توسط دانشجو (محاسبه هوشمند ساعت و بازه توسط هوش مصنوعی) -->
       <form id="ai-quick-add-row-form" style="background: var(--bg-primary); padding: 12px; border-radius: 14px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
         <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-cyan);">➕ افزودن درس جدید به پکیج پیشنهادی:</span>
-        <div style="display: grid; grid-template-columns: 2fr 1.3fr 1fr 1fr auto; gap: 8px; align-items: flex-end;">
+        <div style="display: grid; grid-template-columns: 2fr 1.3fr 1fr auto; gap: 8px; align-items: flex-end;">
           <div class="input-field-group">
             <label style="font-size: 0.74rem;">نام درس یا مبحث:</label>
             <input type="text" id="ai-input-title" placeholder="مثال: ریاضی مهندسی..." required>
@@ -321,9 +321,9 @@
           <div class="input-field-group">
             <label style="font-size: 0.74rem;">سطح اولویت:</label>
             <select id="ai-input-tier" class="task-select">
-              <option value="high">🔥 سطح ۱: حیاتی (عمیق)</option>
-              <option value="medium" selected>⚡ سطح ۲: عادی (روتین)</option>
-              <option value="low">🌱 سطح ۳: مرور (سبک)</option>
+              <option value="high">🔥 سطح ۱: حیاتی (عمیق - ۲ ساعته)</option>
+              <option value="medium" selected>⚡ سطح ۲: عادی (روتین - ۱.۵ ساعته)</option>
+              <option value="low">🌱 سطح ۳: مرور (سبک - ۴۵ دقیقه)</option>
             </select>
           </div>
           <div class="input-field-group">
@@ -338,16 +338,7 @@
               <option value="fri">جمعه</option>
             </select>
           </div>
-          <div class="input-field-group">
-            <label style="font-size: 0.74rem;">مدت زمان:</label>
-            <select id="ai-input-duration" class="task-select">
-              <option value="1.5">🎓 ۱.۵ ساعته</option>
-              <option value="1.0">⏱️ ۱ ساعته</option>
-              <option value="2.0">📚 ۲ ساعته</option>
-              <option value="0.75">⚡ ۴۵ دقیقه</option>
-            </select>
-          </div>
-          <button type="submit" class="btn-primary" style="height: 38px; padding: 0 14px; font-size: 0.82rem;">+ افزودن سطر</button>
+          <button type="submit" class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 0.84rem;">🤖 تعیین ساعت و افزودن</button>
         </div>
       </form>
 
@@ -631,6 +622,7 @@
                   <option value="2700">45 دقیقه (عمیق)</option>
                   <option value="3600">60 دقیقه (سنگین)</option>
                   <option value="5400">90 دقیقه (کنکوری)</option>
+                  <option value="custom">✏️ زمان دلخواه...</option>
                 </select>
               </div>
               <div class="select-group">
@@ -913,24 +905,6 @@
               <div>
                 <h2 id="mascot-review-title">ارزیاب هوشمند عملکرد و پیشنهادات مسکات</h2>
                 <p id="mascot-review-desc" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">توصیه‌های تحلیلی اختصاصی برای تعادل انرژی و پیشرفت مطالعاتی</p>
-              </div>
-            </div>
-            <button type="button" id="run-weekly-analysis-btn" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #3fb950); color: #0b1118; font-weight: 800; padding: 8px 18px;">
-              ⚡ به‌روزرسانی تحلیل هوشمند
-            </button>
-          </div>
-
-          <div id="weekly-analysis-results" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 1rem;"></div>
-        </article>
-
-        <!-- موتور بازخورد هوشمند مسکات Catmodoro -->
-        <article class="widget-card" style="margin-top: 1.2rem;">
-          <div class="widget-header" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 1.8rem;">🧠</span>
-              <div>
-                <h2 id="mascot-review-title">ارزیاب هوشمند عملکرد و پیشنهادات مسکات</h2>
-<p id="mascot-review-desc" style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">توصیه‌های تحلیلی اختصاصی برای تعادل انرژی و پیشرفت مطالعاتی</p>
               </div>
             </div>
             <button type="button" id="run-weekly-analysis-btn" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #3fb950); color: #0b1118; font-weight: 800; padding: 8px 18px;">
